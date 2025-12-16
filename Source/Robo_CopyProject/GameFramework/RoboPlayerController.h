@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "RoboPlayerController.generated.h"
 
-class UInputMappingContext;
+class UPlayerWidget;
 
 /**
  * 
@@ -21,5 +21,11 @@ public:
 	virtual void OnUnPossess() override;
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerWidget")
+	TSubclassOf<UPlayerWidget> PlayerWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerWidget")
+	TObjectPtr<UPlayerWidget> PlayerWidgetObject;
 	
 };
