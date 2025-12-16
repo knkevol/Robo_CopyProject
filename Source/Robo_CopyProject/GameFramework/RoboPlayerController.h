@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "RoboPlayerController.generated.h"
 
+class UInputMappingContext;
+
 /**
  * 
  */
@@ -13,5 +15,11 @@ UCLASS()
 class ROBO_COPYPROJECT_API ARoboPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+	virtual void OnPossess(APawn* aPawn) override;
+	virtual void OnUnPossess() override;
+
+	virtual void BeginPlay() override;
 	
 };

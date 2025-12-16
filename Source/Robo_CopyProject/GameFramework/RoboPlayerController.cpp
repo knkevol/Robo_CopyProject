@@ -3,3 +3,17 @@
 
 #include "RoboPlayerController.h"
 
+void ARoboPlayerController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+}
+
+void ARoboPlayerController::OnUnPossess()
+{
+	Super::OnUnPossess();
+}
+
+void ARoboPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+}
