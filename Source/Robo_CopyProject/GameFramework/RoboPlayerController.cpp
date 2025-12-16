@@ -2,6 +2,7 @@
 
 
 #include "RoboPlayerController.h"
+#include "../Widget/PlayerWidget.h"
 
 void ARoboPlayerController::OnPossess(APawn* aPawn)
 {
@@ -16,4 +17,13 @@ void ARoboPlayerController::OnUnPossess()
 void ARoboPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (IsLocalPlayerController())
+	{
+		if (PlayerWidgetClass)
+		{
+			PlayerWidgetObject = CreateWidget<UPlayerWidget>(this, PlayerWidgetClass);
+			PlayerWidgetObject->AddToViewport();
+		}
+	}
 }
