@@ -6,6 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerStatWidget.generated.h"
 
+class UTextBlock;
+class UProgressBar;
+class UImage;
+
 /**
  * 
  */
@@ -14,4 +18,30 @@ class ROBO_COPYPROJECT_API UPlayerStatWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void NativeOnInitialized() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	TObjectPtr<UImage> GuardianImage;
+
+	//-------------HP------------
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	TObjectPtr<UProgressBar> PlayerHP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	TObjectPtr<UTextBlock> CurHP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	TObjectPtr<UTextBlock> MaxHP;
+
+	UFUNCTION()
+	void ProcessHPBar(float InPercent);
+	
+
+
+	//-------------Level------------
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	TObjectPtr<UProgressBar> PlayerXP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	TObjectPtr<UTextBlock> PlayerLevel;
 };

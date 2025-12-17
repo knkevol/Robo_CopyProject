@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GenericTeamAgentInterface.h"
 #include "RoboPlayer.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedHP, const float, Percent);
 
 UCLASS()
 class ROBO_COPYPROJECT_API ARoboPlayer : public ACharacter
@@ -25,5 +28,19 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION()
+	void OnRep_CurrentHP();
+	// -----Player State-----
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PlayerStat", ReplicatedUsing = "OnRep_CurrentHP")
+	float CurHp = 100;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PlayerStat", Replicated)
+	float MaxHp = 100;
+
+	// 복제 통지 함수
+	UPROPERTY(BlueprintAssignable)
+	FOnChangedHP OnHpChanged;
 
 };

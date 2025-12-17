@@ -2,6 +2,7 @@
 
 
 #include "RoboPlayer.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ARoboPlayer::ARoboPlayer()
@@ -30,5 +31,18 @@ void ARoboPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ARoboPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ARoboPlayer, CurHp);
+	DOREPLIFETIME(ARoboPlayer, MaxHp);
+}
+
+void ARoboPlayer::OnRep_CurrentHP()
+{
+	OnHpChanged.Broadcast(CurHp / MaxHp);
 }
 
