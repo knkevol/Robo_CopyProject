@@ -45,4 +45,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	TSubclassOf<class AItemBase> ItemTemplate;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboData")
+	uint8 bIsItemDestroy : 1 = false;
+
 };

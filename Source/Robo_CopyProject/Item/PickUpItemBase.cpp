@@ -13,7 +13,7 @@ APickUpItemBase::APickUpItemBase()
 
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	RootComponent = Sphere;
-	Sphere->SetSphereRadius(100.f);
+	Sphere->SetSphereRadius(50.f);
 	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -21,13 +21,23 @@ APickUpItemBase::APickUpItemBase()
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
-
+	bNetLoadOnClient = true;
+	bNetUseOwnerRelevancy = true;
 }
 
 // Called when the game starts or when spawned
 void APickUpItemBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (GetOwner())
+	{
+
+	}
+	else
+	{
+
+	}
 	
 }
 
