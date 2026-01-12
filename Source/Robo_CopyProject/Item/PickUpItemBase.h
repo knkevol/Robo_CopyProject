@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "../Interface/Interface_Press.h"
 #include "PickUpItemBase.generated.h"
 
 UENUM(BlueprintType)
@@ -17,7 +18,7 @@ class UStaticMeshComponent;
 class USphereComponent;
 
 UCLASS()
-class ROBO_COPYPROJECT_API APickUpItemBase : public AActor
+class ROBO_COPYPROJECT_API APickUpItemBase : public AActor, public IInterface_Press
 {
 	GENERATED_BODY()
 	
@@ -47,5 +48,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboData")
 	uint8 bIsItemDestroy : 1 = false;
+
+	//-------------Interface_Press
+	virtual void PressG_Implementation(ACharacter* Character) override;
 
 };

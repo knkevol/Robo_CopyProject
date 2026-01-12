@@ -4,6 +4,7 @@
 #include "PickUpItemBase.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "../GameFramework/RoboPlayer.h"
 
 // Sets default values
 APickUpItemBase::APickUpItemBase()
@@ -46,5 +47,30 @@ void APickUpItemBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void APickUpItemBase::PressG_Implementation(ACharacter* Character)
+{
+
+	UE_LOG(LogTemp, Warning, TEXT("APickUpItemBase::PressG_Implementation"));
+	if (!Character)
+		return;
+
+	switch (ItemType)
+	{
+	case EItemType::Weapon:
+		Cast<ARoboPlayer>(Character)->EquipItem(this);
+		break;
+	case EItemType::Item:
+		Cast<ARoboPlayer>(Character)->UseItem(this);
+		break;
+	}
+
+	SetOwner(Character);
+
+	if (!bIsItemDestroy)
+	{
+		Destroy();
+	}
 }
 

@@ -5,9 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "GenericTeamAgentInterface.h"
+#include "../Interface/Interface_Press.h"
 #include "RoboPlayer.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedHP, const float, Percent);
+
+class UInputAction;
 
 UENUM(BlueprintType)
 enum class EWeaponState : uint8
@@ -21,13 +24,16 @@ enum class EWeaponState : uint8
 };
 
 UCLASS()
-class ROBO_COPYPROJECT_API ARoboPlayer : public ACharacter
+class ROBO_COPYPROJECT_API ARoboPlayer : public ACharacter, public IInterface_Press
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	ARoboPlayer();
+
+	virtual void PressG_Implementation(ACharacter* Character) override;
+	virtual void ReleaseG_Implementation() override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -59,17 +65,40 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", Replicated)
 	EWeaponState WeaponState = EWeaponState::Unarmed;
 
-	// Delegate
+	// -------------Delegate
 	UFUNCTION()
 	void ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 
-	// -----Weapon
+	// --------------Weapon
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UChildActorComponent> Weapon;
 
+
 	void EquipItem(class APickUpItemBase* PickedItem);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multi_EquipItem(class APickUpItemBase* PickedItem);
+	void Multi_EquipItem_Implementation(class APickUpItemBase* PickedItem);
+
+
 	void UseItem(class APickUpItemBase* PickedItem);
 
+	// -------Find Actor
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	AActor* FindNearestActor() const;
+
+	// --------RPC
+	UFUNCTION(Server, Reliable)
+	void Server_PressG();
+	void Server_PressG_Implementation();
+
+	UFUNCTION(BlueprintCallable)
+	void Input_PressG();
+	void PressNearestItem();
+
+	//----------------Input Action
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
+	TObjectPtr<UInputAction> IA_Equip;
 
 };
