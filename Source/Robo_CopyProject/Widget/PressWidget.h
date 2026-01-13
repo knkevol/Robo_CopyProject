@@ -14,4 +14,5 @@ class ROBO_COPYPROJECT_API UPressWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
 };
