@@ -8,7 +8,9 @@ public class Robo_CopyProject : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "AnimGraphRuntime", "NavigationSystem", "AIModule", "UMG" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", 
+			"EnhancedInput", "AnimGraphRuntime", "NavigationSystem", "AIModule", "UMG",
+			"AnimGraphRuntime"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
