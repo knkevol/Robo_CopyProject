@@ -58,7 +58,10 @@ void ARoboPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	if (UIC)
 	{
 		UIC->BindAction(IA_Equip, ETriggerEvent::Started, this, &ARoboPlayer::Input_PressG);
-		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ARoboPlayer::C2S_Reload);
+		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ARoboPlayer::Server_Reload);
+
+		UIC->BindAction(IA_Fire, ETriggerEvent::Started, this, &ARoboPlayer::StartFire);
+		UIC->BindAction(IA_Fire, ETriggerEvent::Completed, this, &ARoboPlayer::StopFire);
 	}
 
 }
@@ -245,7 +248,7 @@ void ARoboPlayer::PressNearestItem()
 	}
 }
 
-void ARoboPlayer::S2A_Reload_Implementation()
+void ARoboPlayer::Multi_Reload_Implementation()
 {
 	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
 	if (ChildWeapon)
@@ -254,9 +257,23 @@ void ARoboPlayer::S2A_Reload_Implementation()
 	}
 }
 
-void ARoboPlayer::C2S_Reload_Implementation()
+void ARoboPlayer::Server_Reload_Implementation()
 {
-	S2A_Reload();
+	Multi_Reload();
+}
+
+void ARoboPlayer::Server_StartFire_Implementation()
+{
+	DoFire();
+}
+
+void ARoboPlayer::Server_StopFire_Implementation()
+{
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		ChildWeapon->StopFire();
+	}
 }
 
 void ARoboPlayer::ReloadWeapon()
@@ -267,4 +284,23 @@ void ARoboPlayer::ReloadWeapon()
 	{
 		ChildWeapon->Reload();
 	}
+}
+
+void ARoboPlayer::DoFire()
+{
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		ChildWeapon->Fire();
+	}
+}
+
+void ARoboPlayer::StartFire()
+{
+	Server_StartFire();
+}
+
+void ARoboPlayer::StopFire()
+{
+	Server_StopFire();
 }

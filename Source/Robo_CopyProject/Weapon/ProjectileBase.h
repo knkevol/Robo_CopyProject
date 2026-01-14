@@ -6,6 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "ProjectileBase.generated.h"
 
+class UProjectileMovementComponent;
+class UStaticMeshComponent;
+class UBoxComponent;
+
 UCLASS()
 class ROBO_COPYPROJECT_API AProjectileBase : public AActor
 {
@@ -22,5 +26,31 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	TObjectPtr<UBoxComponent> Box;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	TObjectPtr<UProjectileMovementComponent> Movement;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	TObjectPtr<UStaticMeshComponent> Mesh;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	float Damage = 10.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	TSubclassOf<UDamageType> HitDamage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	FHitResult HitResult;
+
+	UFUNCTION()
+	void ProcessBeginOverlap(AActor* OverlapedActor, AActor* OtherActor);
+
+	// ----------Deligate
+	UFUNCTION()
+	void ProcessComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 
 };

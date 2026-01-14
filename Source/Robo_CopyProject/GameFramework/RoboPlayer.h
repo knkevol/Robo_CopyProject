@@ -93,12 +93,20 @@ public:
 	void PressNearestItem();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void S2A_Reload();
-	void S2A_Reload_Implementation();
+	void Multi_Reload();
+	void Multi_Reload_Implementation();
 
 	UFUNCTION(Server, Reliable)
-	void C2S_Reload();
-	void C2S_Reload_Implementation();
+	void Server_Reload();
+	void Server_Reload_Implementation();
+
+	UFUNCTION(Server, Reliable)
+	void Server_StartFire();
+	void Server_StartFire_Implementation();
+
+	UFUNCTION(Server, Reliable)
+	void Server_StopFire();
+	void Server_StopFire_Implementation();
 
 	//----------------Input Action
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
@@ -113,5 +121,14 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ReloadWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	void DoFire();
+
+	UFUNCTION(BlueprintCallable)
+	void StartFire();
+
+	UFUNCTION(BlueprintCallable)
+	void StopFire();
 
 };

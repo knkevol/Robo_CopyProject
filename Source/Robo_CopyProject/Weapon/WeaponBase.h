@@ -6,7 +6,7 @@
 #include "../Item/ItemBase.h"
 #include "WeaponBase.generated.h"
 
-class UStaticMeshComponent;
+class USkeletalMeshComponent;
 class AProjectileBase;
 class UAnimMontage;
 
@@ -28,7 +28,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWeaponComponent")
-	TObjectPtr<UStaticMeshComponent> Mesh;
+	TObjectPtr<USkeletalMeshComponent> Mesh;
 
 	// ---------------Weapon Info
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
@@ -53,8 +53,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Fire();
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData", meta = (ClampMin = 0.1f, ClampMax = 2.0f, Unit = "s"))
+	float RefireRate = 0.5f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
+	float TimeofLastShoot = 0.0f;
 	UFUNCTION(BlueprintCallable)
 	void FireProjectile(FTransform SpawnTransform, FHitResult InHitResult);
+	FTimerHandle RefireTimer;
+	bool CalculateShootData(FVector& OutSpawnLocation, FVector& OutTargetLocation, FRotator& OutAimRotation);
+
+	UFUNCTION(BlueprintCallable)
+	void StopFire();
 
 	// ---------------Montages
 	UPROPERTY(BlueprintReadWrite, EditAnywhere , Category = "RoboMontage")
