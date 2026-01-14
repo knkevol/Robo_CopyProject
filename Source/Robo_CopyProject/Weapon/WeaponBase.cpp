@@ -32,3 +32,18 @@ void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+void AWeaponBase::Reload()
+{
+	CurBullet = MaxBullet;
+	UE_LOG(LogTemp, Warning, TEXT("Reload %d"), CurBullet);
+}
+
+void AWeaponBase::Fire()
+{
+}
+
+void AWeaponBase::FireProjectile(FTransform SpawnTransform, FHitResult InHitResult)
+{
+}
+

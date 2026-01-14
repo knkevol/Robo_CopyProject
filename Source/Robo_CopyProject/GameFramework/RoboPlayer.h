@@ -48,7 +48,13 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
-	// -----Player State-----
+	// -----Player Data-----
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", Replicated)
+	EWeaponState WeaponState = EWeaponState::Unarmed;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UChildActorComponent> Weapon;
+
 	UFUNCTION()
 	void OnRep_CurrentHP();
 	
@@ -60,45 +66,52 @@ public:
 	// 복제 통지 함수
 	UPROPERTY(BlueprintAssignable)
 	FOnChangedHP OnHpChanged;
-	// Bind (Network)-------
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", Replicated)
-	EWeaponState WeaponState = EWeaponState::Unarmed;
-
+	
 	// -------------Delegate
 	UFUNCTION()
 	void ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
-
-
-	// --------------Weapon
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UChildActorComponent> Weapon;
-
-
-	void EquipItem(class APickUpItemBase* PickedItem);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void Multi_EquipItem(class APickUpItemBase* PickedItem);
-	void Multi_EquipItem_Implementation(class APickUpItemBase* PickedItem);
-
-
-	void UseItem(class APickUpItemBase* PickedItem);
 
 	// -------Find Actor
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	AActor* FindNearestActor() const;
 
+	void EquipItem(class APickUpItemBase* PickedItem);
+	void UseItem(class APickUpItemBase* PickedItem);
+
 	// --------RPC
+	UFUNCTION(NetMulticast, Reliable)
+	void Multi_EquipItem(class APickUpItemBase* PickedItem);
+	void Multi_EquipItem_Implementation(class APickUpItemBase* PickedItem);
+
 	UFUNCTION(Server, Reliable)
 	void Server_PressG();
 	void Server_PressG_Implementation();
 
 	UFUNCTION(BlueprintCallable)
 	void Input_PressG();
+
 	void PressNearestItem();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void S2A_Reload();
+	void S2A_Reload_Implementation();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_Reload();
+	void C2S_Reload_Implementation();
 
 	//----------------Input Action
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
 	TObjectPtr<UInputAction> IA_Equip;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
+	TObjectPtr<UInputAction> IA_Reload;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
+	TObjectPtr<UInputAction> IA_Fire;
+
+
+	UFUNCTION(BlueprintCallable)
+	void ReloadWeapon();
 
 };

@@ -30,7 +30,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWeaponComponent")
 	TObjectPtr<UStaticMeshComponent> Mesh;
 
-	// Weapon Info
+	// ---------------Weapon Info
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
 	TSubclassOf<AProjectileBase> ProjectileTemplate;
 
@@ -39,4 +39,28 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
 	FName Name;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
+	int32 MaxBullet = 100;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
+	int32 CurBullet = 100;
+
+	// ---------------Weapon Action
+	UFUNCTION(BlueprintCallable)
+	void Reload();
+
+	UFUNCTION(BlueprintCallable)
+	void Fire();
+
+	UFUNCTION(BlueprintCallable)
+	void FireProjectile(FTransform SpawnTransform, FHitResult InHitResult);
+
+	// ---------------Montages
+	UPROPERTY(BlueprintReadWrite, EditAnywhere , Category = "RoboMontage")
+	TObjectPtr<UAnimMontage> FireMontage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboMontage")
+	TObjectPtr<UAnimMontage> ReloadMontage;
+
 };

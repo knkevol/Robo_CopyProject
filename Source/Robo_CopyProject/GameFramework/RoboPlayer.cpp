@@ -26,10 +26,12 @@ ARoboPlayer::ARoboPlayer()
 
 void ARoboPlayer::PressG_Implementation(ACharacter* Character)
 {
+	//인터페이스 PressG 동작 쓸 때 사용
 }
 
 void ARoboPlayer::ReleaseG_Implementation()
 {
+	//인터페이스 ReleaseG 동작 쓸 때 사용
 }
 
 // Called when the game starts or when spawned
@@ -56,6 +58,7 @@ void ARoboPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	if (UIC)
 	{
 		UIC->BindAction(IA_Equip, ETriggerEvent::Started, this, &ARoboPlayer::Input_PressG);
+		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ARoboPlayer::C2S_Reload);
 	}
 
 }
@@ -239,5 +242,29 @@ void ARoboPlayer::PressNearestItem()
 	if (PickedItem->GetClass()->ImplementsInterface(UInterface_Press::StaticClass()))
 	{
 		IInterface_Press::Execute_PressG(PickedItem, this);
+	}
+}
+
+void ARoboPlayer::S2A_Reload_Implementation()
+{
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		PlayAnimMontage(ChildWeapon->ReloadMontage);
+	}
+}
+
+void ARoboPlayer::C2S_Reload_Implementation()
+{
+	S2A_Reload();
+}
+
+void ARoboPlayer::ReloadWeapon()
+{
+	// Bullet = Max
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		ChildWeapon->Reload();
 	}
 }
