@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "WeaponBase.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Character.h"
-#include "../GameFramework/RoboPlayer.h"
+#include "../Player/RoboPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "ProjectileBase.h"
 
@@ -123,7 +123,7 @@ bool AWeaponBase::CalculateShootData(FVector& OutSpawnLocation, FVector& OutTarg
 	}
 	else
 	{
-		// Controller°¡ ¾øÀ» ¶§ fallback
+		// Controllerê°€ ì—†ì„ ë•Œ fallback
 		ViewLocation = RoboPlayer->GetPawnViewLocation();
 		ViewRotation = RoboPlayer->GetViewRotation();
 	}
@@ -143,6 +143,5 @@ bool AWeaponBase::CalculateShootData(FVector& OutSpawnLocation, FVector& OutTarg
 
 	OutAimRotation = UKismetMathLibrary::FindLookAtRotation(OutSpawnLocation, OutTargetLocation + (UKismetMathLibrary::RandomUnitVector() * 0.3f));
 
-	return false;
+	return true;
 }
-

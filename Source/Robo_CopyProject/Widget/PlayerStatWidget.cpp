@@ -5,7 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
-#include "../GameFramework/RoboPlayer.h"
+#include "../Player/RoboPlayer.h"
 
 void UPlayerStatWidget::NativeOnInitialized()
 {

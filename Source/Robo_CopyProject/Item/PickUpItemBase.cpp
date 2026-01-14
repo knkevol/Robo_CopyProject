@@ -4,7 +4,7 @@
 #include "PickUpItemBase.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "../GameFramework/RoboPlayer.h"
+#include "../Player/RoboPlayer.h"
 
 // Sets default values
 APickUpItemBase::APickUpItemBase()

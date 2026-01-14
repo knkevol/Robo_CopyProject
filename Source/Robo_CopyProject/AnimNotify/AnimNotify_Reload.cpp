@@ -2,7 +2,7 @@
 
 
 #include "AnimNotify_Reload.h"
-#include "../GameFramework/RoboPlayer.h"
+#include "../Player/RoboPlayer.h"
 
 FString UAnimNotify_Reload::GetNotifyName_Implementation() const
 {
