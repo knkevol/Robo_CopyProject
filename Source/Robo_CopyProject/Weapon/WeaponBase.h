@@ -27,7 +27,7 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RoboWeaponComponent")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWeaponComponent")
 	TObjectPtr<UStaticMeshComponent> Mesh;
 
 	// Weapon Info
