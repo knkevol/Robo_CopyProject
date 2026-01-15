@@ -68,10 +68,11 @@ void ARoboPlayer::Tick(float DeltaTime)
 void ARoboPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	UE_LOG(LogTemp, Warning, TEXT("SetupPlayerInputComponent"));
 	UEnhancedInputComponent* UIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (UIC)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("UIC"));
 		UIC->BindAction(IA_Equip, ETriggerEvent::Started, this, &ARoboPlayer::Input_PressG);
 		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ARoboPlayer::Server_Reload);
 

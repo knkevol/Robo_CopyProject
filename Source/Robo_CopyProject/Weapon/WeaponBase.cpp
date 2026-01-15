@@ -27,9 +27,9 @@ void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (GetOwner())
+	if (ARoboPlayer* Player = GetOwningPlayer())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Weapon Owner %s"), *GetOwner()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Weapon Owner %s"), *GetOwningPlayer()->GetName());
 	}
 	else
 	{
@@ -40,6 +40,15 @@ void AWeaponBase::BeginPlay()
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+ARoboPlayer* AWeaponBase::GetOwningPlayer() const
+{
+	if (AActor* Parent = GetParentActor())
+	{
+		return Cast<ARoboPlayer>(Parent);
+	}
+	return nullptr;
 }
 
 void AWeaponBase::Reload()

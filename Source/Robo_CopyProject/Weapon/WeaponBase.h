@@ -9,6 +9,7 @@
 class USkeletalMeshComponent;
 class AProjectileBase;
 class UAnimMontage;
+class ARoboPlayer;
 
 /**
  * 
@@ -45,6 +46,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
 	int32 CurBullet = 100;
+
+
+	ARoboPlayer* GetOwningPlayer() const;
 
 	// ---------------Weapon Action
 	UFUNCTION(BlueprintCallable)
