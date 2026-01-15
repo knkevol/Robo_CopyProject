@@ -11,6 +11,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedHP, const float, Percent);
 
 class UInputAction;
+class AWeaponBase;
 
 UENUM(BlueprintType)
 enum class EWeaponState : uint8
@@ -130,5 +131,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void StopFire();
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	TSubclassOf<AWeaponBase> WeaponClass;
+
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass);
 
 };

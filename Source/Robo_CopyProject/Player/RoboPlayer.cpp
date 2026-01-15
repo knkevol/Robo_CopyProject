@@ -22,6 +22,13 @@ ARoboPlayer::ARoboPlayer()
 	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	Weapon->SetupAttachment(GetMesh());
 
+	/*if (GetMesh())
+	{
+		GetMesh()->SetOwnerNoSee(false);
+		GetMesh()->SetOnlyOwnerSee(false);
+		GetMesh()->SetVisibility(true, true);
+	}*/
+
 }
 
 void ARoboPlayer::PressG_Implementation(ACharacter* Character)
@@ -38,6 +45,14 @@ void ARoboPlayer::ReleaseG_Implementation()
 void ARoboPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (GetMesh())
+	{
+		GetMesh()->SetOwnerNoSee(false);
+		GetMesh()->SetOnlyOwnerSee(false);
+		GetMesh()->SetVisibility(true, true);
+	}
+
 	OnActorBeginOverlap.AddDynamic(this, &ARoboPlayer::ProcessBeginOverlap);
 	
 }
@@ -250,15 +265,18 @@ void ARoboPlayer::PressNearestItem()
 
 void ARoboPlayer::Multi_Reload_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Multi_Reload_Implementation"));
 	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
 	if (ChildWeapon)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Multi_Reload_Implementation_ChildWeapon"));
 		PlayAnimMontage(ChildWeapon->ReloadMontage);
 	}
 }
 
 void ARoboPlayer::Server_Reload_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Server_Reload_Implementation"));
 	Multi_Reload();
 }
 
@@ -303,4 +321,55 @@ void ARoboPlayer::StartFire()
 void ARoboPlayer::StopFire()
 {
 	Server_StopFire();
+}
+
+void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
+{
+	if (!Weapon || !InWeaponClass)
+		return;
+
+	Weapon->SetChildActorClass(InWeaponClass);
+
+	if (!Weapon->GetChildActor())
+	{
+		Weapon->CreateChildActor();
+	}
+
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (!ChildWeapon)
+		return;
+
+	if (ChildWeapon)
+	{
+		if (ChildWeapon->Name.Compare(TEXT("Pistol")) == 0)
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::Pistol;
+			ChildWeapon->SetOwner(this);
+		}
+		else if (ChildWeapon->Name.Compare(TEXT("Rifle")) == 0)
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::Rifle;
+			ChildWeapon->SetOwner(this);
+		}
+		else if (ChildWeapon->Name.Compare(TEXT("ScifiKnife")) == 0)
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::ScifiKnife;
+			ChildWeapon->SetOwner(this);
+		}
+		else if (ChildWeapon->Name.Compare(TEXT("ScifiWeapon01")) == 0)
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::ScifiWeapon01;
+			ChildWeapon->SetOwner(this);
+		}
+		else if (ChildWeapon->Name.Compare(TEXT("ScifiWeapon02")) == 0)
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::ScifiWeapon02;
+			ChildWeapon->SetOwner(this);
+		}
+	}
 }
