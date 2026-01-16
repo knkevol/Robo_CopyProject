@@ -59,8 +59,6 @@ void AWeaponBase::Reload()
 
 void AWeaponBase::Fire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AWeaponBase::Fire()"));
-
 	float CurrentTimeofShoot = GetWorld()->TimeSeconds - TimeofLastShoot;
 
 	if (CurrentTimeofShoot < RefireRate)
@@ -68,7 +66,10 @@ void AWeaponBase::Fire()
 		return;
 	}
 
-	GetWorld()->GetTimerManager().SetTimer(RefireTimer, this, &AWeaponBase::Fire, RefireRate, false);
+	//if (bFullAuto)
+	//{
+	//	GetWorld()->GetTimerManager().SetTimer(RefireTimer, this, &AWeaponBase::Fire, RefireRate, false);
+	//}
 
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 
@@ -77,6 +78,7 @@ void AWeaponBase::Fire()
 		return;
 	}
 
+	//Calculate
 	FVector SpawnLocation;
 	FVector TargetLocation;
 	FRotator AimRotation;
@@ -90,11 +92,13 @@ void AWeaponBase::Fire()
 
 	FireProjectile(FTransform(AimRotation, SpawnLocation, FVector::OneVector), HitResult);
 
+	//Recoil
 	Character->AddControllerPitchInput(-0.05f);
 
 
 	CurBullet--;
-	UE_LOG(LogTemp, Warning, TEXT("After Fire %d"), CurBullet);
+	UE_LOG(LogTemp, Warning, TEXT("Fire %d"), CurBullet);
+
 
 	TimeofLastShoot = GetWorld()->TimeSeconds;
 }
