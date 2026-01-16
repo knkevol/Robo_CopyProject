@@ -309,7 +309,7 @@ void ARoboPlayer::DoFire()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::DoFire()"));
 		PlayAnimMontage(ChildWeapon->FireMontage);
-		ChildWeapon->Fire();
+		ChildWeapon->Fire(); 
 	}
 }
 
