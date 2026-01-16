@@ -366,14 +366,14 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 		else if (ChildWeapon->Name.Compare(TEXT("ScifiWeapon01")) == 0)
 		{
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
-			WeaponState = EWeaponState::ScifiWeapon01;
+			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
 		}
 		else if (ChildWeapon->Name.Compare(TEXT("ScifiWeapon02")) == 0)
 		{
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
-			WeaponState = EWeaponState::ScifiWeapon02;
+			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
 		}
