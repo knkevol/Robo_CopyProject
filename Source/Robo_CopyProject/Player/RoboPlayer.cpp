@@ -266,18 +266,15 @@ void ARoboPlayer::PressNearestItem()
 
 void ARoboPlayer::Multi_Reload_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Multi_Reload_Implementation"));
 	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
 	if (ChildWeapon)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Multi_Reload_Implementation_ChildWeapon"));
 		PlayAnimMontage(ChildWeapon->ReloadMontage);
 	}
 }
 
 void ARoboPlayer::Server_Reload_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Server_Reload_Implementation"));
 	Multi_Reload();
 }
 
@@ -310,6 +307,8 @@ void ARoboPlayer::DoFire()
 	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
 	if (ChildWeapon)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::DoFire()"));
+		PlayAnimMontage(ChildWeapon->FireMontage);
 		ChildWeapon->Fire();
 	}
 }

@@ -70,6 +70,7 @@ void AWeaponBase::Fire()
 	//{
 	//	GetWorld()->GetTimerManager().SetTimer(RefireTimer, this, &AWeaponBase::Fire, RefireRate, false);
 	//}
+	GetWorld()->GetTimerManager().SetTimer(RefireTimer, this, &AWeaponBase::Fire, RefireRate, false);
 
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 
@@ -105,6 +106,7 @@ void AWeaponBase::Fire()
 
 void AWeaponBase::StopFire()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Stop Fire"));
 	GetWorld()->GetTimerManager().ClearTimer(RefireTimer);
 }
 
