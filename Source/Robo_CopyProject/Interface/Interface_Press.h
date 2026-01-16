@@ -27,4 +27,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PressG(ACharacter* Character);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void PressF(ACharacter* Character);
 };
