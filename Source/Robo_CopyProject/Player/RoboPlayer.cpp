@@ -379,3 +379,13 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 		}
 	}
 }
+
+FRotator ARoboPlayer::GetAimOffset() const
+{
+	//Player 조준 방향
+	const FVector AimDirWS = GetBaseAimRotation().Vector();
+	const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS);
+	const FRotator AimRotLS = AimDirLS.Rotation();
+
+	return AimRotLS;
+}

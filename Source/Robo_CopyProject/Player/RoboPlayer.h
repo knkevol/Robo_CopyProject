@@ -139,4 +139,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass);
 
+
+	// ----------Player Aim
+	FRotator GetAimOffset() const;
+
 };
