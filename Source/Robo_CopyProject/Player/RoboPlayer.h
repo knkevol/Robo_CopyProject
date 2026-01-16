@@ -56,6 +56,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UChildActorComponent> Weapon;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
+	TObjectPtr<class AWeaponBase> CurWeapon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerWidget")
+	TObjectPtr<class UPlayerWidget> PlayerWidgetObject;
+
+	void SetPlayerWidget(class UPlayerWidget* InWidget);
+
 	UFUNCTION()
 	void OnRep_CurrentHP();
 	
@@ -138,6 +146,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass);
+
+	void HandleBulletChanged(int32 InCurBullet, int32 InMaxBullet);
+
+
 
 
 	// ----------Player Aim

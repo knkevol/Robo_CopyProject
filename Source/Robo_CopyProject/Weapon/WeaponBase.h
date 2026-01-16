@@ -6,6 +6,8 @@
 #include "../Item/ItemBase.h"
 #include "WeaponBase.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBulletChanged, int32, int32);
+
 class USkeletalMeshComponent;
 class AProjectileBase;
 class UAnimMontage;
@@ -21,6 +23,8 @@ class ROBO_COPYPROJECT_API AWeaponBase : public AItemBase
 
 public:
 	AWeaponBase();
+
+	FOnBulletChanged OnBulletChanged;
 
 protected:
 	virtual void BeginPlay() override;
@@ -42,10 +46,10 @@ public:
 	FName Name;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
-	int32 MaxBullet = 100;
+	int32 MaxBullet = 10;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
-	int32 CurBullet = 100;
+	int32 CurBullet = 10;
 
 
 	ARoboPlayer* GetOwningPlayer() const;

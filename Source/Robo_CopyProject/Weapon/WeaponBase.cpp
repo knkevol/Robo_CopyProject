@@ -55,6 +55,7 @@ void AWeaponBase::Reload()
 {
 	CurBullet = MaxBullet;
 	UE_LOG(LogTemp, Warning, TEXT("Reload %d"), CurBullet);
+	OnBulletChanged.Broadcast(CurBullet, MaxBullet);
 }
 
 void AWeaponBase::Fire()
@@ -96,10 +97,9 @@ void AWeaponBase::Fire()
 	//Recoil
 	Character->AddControllerPitchInput(-0.05f);
 
-
 	CurBullet--;
 	UE_LOG(LogTemp, Warning, TEXT("Fire %d"), CurBullet);
-
+	OnBulletChanged.Broadcast(CurBullet, MaxBullet);
 
 	TimeofLastShoot = GetWorld()->TimeSeconds;
 }

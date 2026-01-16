@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
+#include "../Widget/PlayerWidget.h"
 
 // Sets default values
 ARoboPlayer::ARoboPlayer()
@@ -88,6 +89,11 @@ void ARoboPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 	DOREPLIFETIME(ARoboPlayer, CurHp);
 	DOREPLIFETIME(ARoboPlayer, MaxHp);
+}
+
+void ARoboPlayer::SetPlayerWidget(UPlayerWidget* InWidget)
+{
+	PlayerWidgetObject = InWidget;
 }
 
 void ARoboPlayer::OnRep_CurrentHP()
@@ -326,18 +332,25 @@ void ARoboPlayer::StopFire()
 void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 {
 	if (!Weapon || !InWeaponClass)
+	{
 		return;
+	}
+
+	if (CurWeapon)
+	{
+		CurWeapon->OnBulletChanged.RemoveAll(this);
+	}
 
 	Weapon->SetChildActorClass(InWeaponClass);
-
-	if (!Weapon->GetChildActor())
-	{
-		Weapon->CreateChildActor();
-	}
+	Weapon->CreateChildActor();
 
 	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
 	if (!ChildWeapon)
+	{
 		return;
+	}
+
+	CurWeapon = ChildWeapon;
 
 	if (ChildWeapon)
 	{
@@ -347,6 +360,7 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			WeaponState = EWeaponState::Pistol;
 			ChildWeapon->SetOwner(this);
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
+			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
 		else if (ChildWeapon->Name.Compare(TEXT("Rifle")) == 0)
 		{
@@ -354,6 +368,7 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
+			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
 		else if (ChildWeapon->Name.Compare(TEXT("ScifiKnife")) == 0)
 		{
@@ -361,6 +376,7 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			WeaponState = EWeaponState::ScifiKnife;
 			ChildWeapon->SetOwner(this);
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
+			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
 		else if (ChildWeapon->Name.Compare(TEXT("ScifiWeapon01")) == 0)
 		{
@@ -368,6 +384,7 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
+			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
 		else if (ChildWeapon->Name.Compare(TEXT("ScifiWeapon02")) == 0)
 		{
@@ -375,8 +392,27 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
+			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
+
+		HandleBulletChanged(ChildWeapon->CurBullet, ChildWeapon->MaxBullet);
 	}
+}
+
+void ARoboPlayer::HandleBulletChanged(int32 InCurBullet, int32 InMaxBullet)
+{
+	if (!IsLocallyControlled())
+		return;
+
+	ARoboPlayerController* PC = Cast<ARoboPlayerController>(GetController());
+
+	if (!PC->PlayerWidgetObject)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HandleBulletChanged : PlayerWidget is null"));
+		return;
+	}
+
+	PC->PlayerWidgetObject->UpdateBullet(InCurBullet, InMaxBullet);
 }
 
 FRotator ARoboPlayer::GetAimOffset() const

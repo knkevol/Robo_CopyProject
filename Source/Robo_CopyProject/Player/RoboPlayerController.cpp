@@ -3,10 +3,16 @@
 
 #include "RoboPlayerController.h"
 #include "../Widget/PlayerWidget.h"
+#include "RoboPlayer.h"
 
 void ARoboPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
+
+	if (ARoboPlayer* RoboPlayer = Cast<ARoboPlayer>(aPawn))
+	{
+		RoboPlayer->SetPlayerWidget(PlayerWidgetObject);
+	}
 }
 
 void ARoboPlayerController::OnUnPossess()
@@ -24,6 +30,14 @@ void ARoboPlayerController::BeginPlay()
 		{
 			PlayerWidgetObject = CreateWidget<UPlayerWidget>(this, PlayerWidgetClass);
 			PlayerWidgetObject->AddToViewport();
+		}
+	}
+
+	if (APawn* RoboPawn = GetPawn())
+	{
+		if (ARoboPlayer* RoboPlayer = Cast<ARoboPlayer>(RoboPawn))
+		{
+			RoboPlayer->SetPlayerWidget(PlayerWidgetObject);
 		}
 	}
 }

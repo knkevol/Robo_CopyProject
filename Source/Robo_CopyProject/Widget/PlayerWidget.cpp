@@ -2,4 +2,12 @@
 
 
 #include "PlayerWidget.h"
+#include "ProjectileWidget.h"
 
+void UPlayerWidget::UpdateBullet(int32 Cur, int32 Max)
+{
+	if (ProjectileWidget)
+	{
+		ProjectileWidget->SetWidgetBullet(Cur, Max);
+	}
+}

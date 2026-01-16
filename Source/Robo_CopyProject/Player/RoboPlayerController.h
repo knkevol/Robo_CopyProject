@@ -6,8 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "RoboPlayerController.generated.h"
 
-class UPlayerWidget;
-
 /**
  * 
  */
@@ -22,10 +20,11 @@ public:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerWidget")
-	TSubclassOf<UPlayerWidget> PlayerWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboPlayerWidget")
+	TSubclassOf<class UPlayerWidget> PlayerWidgetClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerWidget")
-	TObjectPtr<UPlayerWidget> PlayerWidgetObject;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboPlayerWidget")
+	TObjectPtr<class UPlayerWidget> PlayerWidgetObject;
+
 	
 };
