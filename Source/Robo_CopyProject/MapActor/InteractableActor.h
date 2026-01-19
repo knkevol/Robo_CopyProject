@@ -23,6 +23,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void InteractDoor(ACharacter* Interactor) {};
+	virtual void InteractDoor(ACharacter* Interactor);
 
 };

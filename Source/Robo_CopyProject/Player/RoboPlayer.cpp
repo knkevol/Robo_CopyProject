@@ -13,6 +13,8 @@
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
 #include "../Widget/PlayerWidget.h"
+#include "../MapActor/InteractableActor.h"
+#include "../MapActor/DoorActor.h"
 
 // Sets default values
 ARoboPlayer::ARoboPlayer()
@@ -22,6 +24,12 @@ ARoboPlayer::ARoboPlayer()
 
 	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	Weapon->SetupAttachment(GetMesh());
+
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	Capsule->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Capsule->SetCollisionResponseToAllChannels(ECR_Ignore);
+	Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	Capsule->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
 
 	/*if (GetMesh())
 	{
@@ -45,6 +53,10 @@ void ARoboPlayer::BeginPlay()
 	}
 
 	OnActorBeginOverlap.AddDynamic(this, &ARoboPlayer::ProcessBeginOverlap);
+
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	Capsule->OnComponentBeginOverlap.AddDynamic(this,&ARoboPlayer::OnBeginOverlap);
+	Capsule->OnComponentEndOverlap.AddDynamic(this,	&ARoboPlayer::OnEndOverlap);
 	
 }
 
@@ -65,6 +77,7 @@ void ARoboPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UIC"));
 		UIC->BindAction(IA_Equip, ETriggerEvent::Started, this, &ARoboPlayer::Input_PressE);
+		UIC->BindAction(IA_DoorOpen, ETriggerEvent::Started, this, &ARoboPlayer::Input_PressF);
 		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ARoboPlayer::Server_Reload);
 
 		UIC->BindAction(IA_Fire, ETriggerEvent::Started, this, &ARoboPlayer::StartFire);
@@ -184,6 +197,24 @@ void ARoboPlayer::UseItem(APickUpItemBase* PickedItem)
 {
 }
 
+void ARoboPlayer::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,	bool bFromSweep, const FHitResult& SweepResult)
+{
+
+	if (AInteractableActor* Interactable = Cast<AInteractableActor>(OtherActor))
+	{
+		FocusedActor = Interactable;
+		UE_LOG(LogTemp, Warning, TEXT("FocusedActor SET: %s"), *OtherActor->GetName());
+	}
+}
+
+void ARoboPlayer::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor == FocusedActor)
+	{
+		FocusedActor = nullptr;
+	}
+}
+
 AActor* ARoboPlayer::FindNearestActor() const
 {
 	AActor* NearestActor = nullptr;
@@ -238,6 +269,26 @@ void ARoboPlayer::Input_PressE()
 	if (TargetActor->GetClass()->ImplementsInterface(UInterface_Press::StaticClass()))
 	{
 		IInterface_Press::Execute_PressE(TargetActor, this);
+	}
+}
+
+void ARoboPlayer::Server_InteractDoor_Implementation(AActor* Target)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::Server_InteractDoor_Implementation"));
+	if (auto* Interactable = Cast<AInteractableActor>(Target))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::Server_InteractDoor_Implementation_Interactable!!!!"));
+		Interactable->InteractDoor(this);
+	}
+}
+
+void ARoboPlayer::Input_PressF()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::Input_PressF()"));
+	if (FocusedActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::Input_PressF()_FocusedActor"));
+		Server_InteractDoor(FocusedActor);
 	}
 }
 

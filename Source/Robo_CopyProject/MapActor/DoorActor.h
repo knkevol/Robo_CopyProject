@@ -27,9 +27,23 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Robo", ReplicatedUsing = "OnRep_IsDoorOpen")
-	uint8 bIsOpen : 1;
+	uint8 bIsOpen : 1 = false;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Robo")
+	FVector ClosedLocation;
+
+	FTimerHandle MoveTimerHandle;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Robo")
+	float MoveAlpha = 0.f;
 
 	virtual void InteractDoor(ACharacter* Interactor) override;
+
+	UFUNCTION()
+	void StartOpenMove();
+
+	UFUNCTION()
+	void UpdateDoorMove();
 
 	UFUNCTION()
 	void OnRep_IsDoorOpen();

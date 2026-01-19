@@ -77,6 +77,24 @@ public:
 	UFUNCTION()
 	void ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
+	UFUNCTION()
+	void OnBeginOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnEndOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
+
+
+
 	// -------Find Actor
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	AActor* FindNearestActor() const;
@@ -96,6 +114,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Input_PressE();
+
+	UFUNCTION(Server, Reliable)
+	void Server_InteractDoor(AActor* Target);
+	void Server_InteractDoor_Implementation(AActor* Target);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInteract")
+	TObjectPtr<class AActor> FocusedActor;
+
+	UFUNCTION(BlueprintCallable)
+	void Input_PressF();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multi_Reload();
@@ -122,6 +150,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
 	TObjectPtr<UInputAction> IA_Fire;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
+	TObjectPtr<UInputAction> IA_DoorOpen;
 
 
 	UFUNCTION(BlueprintCallable)

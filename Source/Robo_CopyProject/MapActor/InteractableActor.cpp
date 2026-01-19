@@ -24,3 +24,8 @@ void AInteractableActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+void AInteractableActor::InteractDoor(ACharacter* Interactor)
+{
+	// 기본 동작 (비워도 됨)
+}
