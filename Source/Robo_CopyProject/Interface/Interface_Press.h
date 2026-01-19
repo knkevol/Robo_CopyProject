@@ -22,11 +22,9 @@ class ROBO_COPYPROJECT_API IInterface_Press
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void ReleaseG();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void PressG(ACharacter* Character);
+	void PressE(ACharacter* Character);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PressF(ACharacter* Character);

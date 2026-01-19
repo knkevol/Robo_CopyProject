@@ -33,9 +33,6 @@ public:
 	// Sets default values for this character's properties
 	ARoboPlayer();
 
-	virtual void PressG_Implementation(ACharacter* Character) override;
-	virtual void ReleaseG_Implementation() override;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -92,14 +89,13 @@ public:
 	void Multi_EquipItem(class APickUpItemBase* PickedItem);
 	void Multi_EquipItem_Implementation(class APickUpItemBase* PickedItem);
 
-	UFUNCTION(Server, Reliable)
-	void Server_PressG();
-	void Server_PressG_Implementation();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_EquipWeapon(TSubclassOf<AWeaponBase> WeaponClass);
+	void Server_EquipWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass);
+
 
 	UFUNCTION(BlueprintCallable)
-	void Input_PressG();
-
-	void PressNearestItem();
+	void Input_PressE();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multi_Reload();
@@ -140,16 +136,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopFire();
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData", ReplicatedUsing = "OnRep_WeaponClass")
+	TSubclassOf<AWeaponBase> CurrentWeaponClass;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
-	TSubclassOf<AWeaponBase> WeaponClass;
+	UFUNCTION()
+	void OnRep_WeaponClass();
+
 
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass);
 
 	void HandleBulletChanged(int32 InCurBullet, int32 InMaxBullet);
-
-
 
 
 	// ----------Player Aim

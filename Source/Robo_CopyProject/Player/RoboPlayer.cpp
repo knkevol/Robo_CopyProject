@@ -32,16 +32,6 @@ ARoboPlayer::ARoboPlayer()
 
 }
 
-void ARoboPlayer::PressG_Implementation(ACharacter* Character)
-{
-	//인터페이스 PressG 동작 쓸 때 사용
-}
-
-void ARoboPlayer::ReleaseG_Implementation()
-{
-	//인터페이스 ReleaseG 동작 쓸 때 사용
-}
-
 // Called when the game starts or when spawned
 void ARoboPlayer::BeginPlay()
 {
@@ -74,7 +64,7 @@ void ARoboPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	if (UIC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UIC"));
-		UIC->BindAction(IA_Equip, ETriggerEvent::Started, this, &ARoboPlayer::Input_PressG);
+		UIC->BindAction(IA_Equip, ETriggerEvent::Started, this, &ARoboPlayer::Input_PressE);
 		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ARoboPlayer::Server_Reload);
 
 		UIC->BindAction(IA_Fire, ETriggerEvent::Started, this, &ARoboPlayer::StartFire);
@@ -196,77 +186,58 @@ void ARoboPlayer::UseItem(APickUpItemBase* PickedItem)
 
 AActor* ARoboPlayer::FindNearestActor() const
 {
-	AActor* LocalNearestActor = nullptr;
-	float LocalNearestDist = 9999999.0f;
+	AActor* NearestActor = nullptr;
+	float NearestDistSq = FLT_MAX;
 
 	TArray<AActor*> OverlappingActors;
-	GetCapsuleComponent()->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
+	GetCapsuleComponent()->GetOverlappingActors(OverlappingActors);
 
 	const FVector SelfLocation = GetActorLocation();
 
 	for (AActor* Actor : OverlappingActors)
 	{
 		if (!Actor)
-		{
 			continue;
-		}
 
-		// Interface_Press 캐스트 (BP의 Cast Interface_Press)
+		// 🔥 인터페이스 필터
 		if (!Actor->GetClass()->ImplementsInterface(UInterface_Press::StaticClass()))
-		{
 			continue;
-		}
 
-		// 거리 계산
-		const FVector ActorLocation = Actor->GetActorLocation();
-		const float Distance = FVector::Dist(SelfLocation, ActorLocation);
-
-		if (LocalNearestDist > Distance)
+		const float DistSq = FVector::DistSquared(SelfLocation, Actor->GetActorLocation());
+		if (DistSq < NearestDistSq)
 		{
-			LocalNearestActor = Actor;
-			LocalNearestDist = Distance;
+			NearestActor = Actor;
+			NearestDistSq = DistSq;
 		}
 	}
 
-	return LocalNearestActor;
+	return NearestActor;
 }
 
-void ARoboPlayer::Server_PressG_Implementation()
+void ARoboPlayer::Server_EquipWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Server_PressG"));
-	PressNearestItem();
+	CurrentWeaponClass = WeaponClass;
+	SetWeaponChildActor(WeaponClass);
 }
 
-void ARoboPlayer::Input_PressG()
+void ARoboPlayer::Input_PressE()
 {
 
-	UE_LOG(LogTemp, Warning, TEXT("Input_PressG"));
+	UE_LOG(LogTemp, Warning, TEXT("Input_PressE"));
 	if (!IsLocallyControlled())
+		return;
+
+	AActor* TargetActor = FindNearestActor();
+	if (!TargetActor)
 	{
 		return;
+		//UE_LOG(LogTemp, Warning, TEXT("!TargetActor"));
 	}
+		
 
-	Server_PressG();
-}
-
-void ARoboPlayer::PressNearestItem()
-{
-	UE_LOG(LogTemp, Warning, TEXT("PressNearestItem()"));
-	AActor* NearestActor = FindNearestActor();
-	if (!NearestActor)
+	if (TargetActor->GetClass()->ImplementsInterface(UInterface_Press::StaticClass()))
 	{
-		return;
-	}
-
-	APickUpItemBase* PickedItem = Cast<APickUpItemBase>(NearestActor);
-	if (!PickedItem)
-	{
-		return;
-	}
-
-	if (PickedItem->GetClass()->ImplementsInterface(UInterface_Press::StaticClass()))
-	{
-		IInterface_Press::Execute_PressG(PickedItem, this);
+		IInterface_Press::Execute_PressE(TargetActor, this);
 	}
 }
 
@@ -329,8 +300,15 @@ void ARoboPlayer::StopFire()
 	Server_StopFire();
 }
 
+void ARoboPlayer::OnRep_WeaponClass()
+{
+	SetWeaponChildActor(CurrentWeaponClass);
+}
+
 void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::SetWeaponChildActor"));
 	if (!Weapon || !InWeaponClass)
 	{
 		return;

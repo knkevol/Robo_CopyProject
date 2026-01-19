@@ -49,10 +49,10 @@ void APickUpItemBase::Tick(float DeltaTime)
 
 }
 
-void APickUpItemBase::PressG_Implementation(ACharacter* Character)
+void APickUpItemBase::PressE_Implementation(ACharacter* Character)
 {
 
-	UE_LOG(LogTemp, Warning, TEXT("APickUpItemBase::PressG_Implementation"));
+	UE_LOG(LogTemp, Warning, TEXT("APickUpItemBase::PressE_Implementation"));
 	if (!Character)
 		return;
 

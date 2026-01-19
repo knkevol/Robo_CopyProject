@@ -46,10 +46,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	TSubclassOf<class AItemBase> ItemTemplate;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboData")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	uint8 bIsItemDestroy : 1 = false;
 
 	//-------------Interface_Press
-	virtual void PressG_Implementation(ACharacter* Character) override;
+	virtual void PressE_Implementation(ACharacter* Character) override;
 
 };

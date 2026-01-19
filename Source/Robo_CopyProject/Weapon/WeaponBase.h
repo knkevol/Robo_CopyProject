@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "../Item/ItemBase.h"
+#include "../Interface/Interface_Press.h"
 #include "WeaponBase.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBulletChanged, int32, int32);
@@ -13,11 +14,12 @@ class AProjectileBase;
 class UAnimMontage;
 class ARoboPlayer;
 
+
 /**
  * 
  */
 UCLASS()
-class ROBO_COPYPROJECT_API AWeaponBase : public AItemBase
+class ROBO_COPYPROJECT_API AWeaponBase : public AItemBase, public IInterface_Press
 {
 	GENERATED_BODY()
 
