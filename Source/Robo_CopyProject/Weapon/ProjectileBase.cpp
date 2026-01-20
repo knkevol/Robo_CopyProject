@@ -39,6 +39,8 @@ void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 	Box->OnComponentHit.AddDynamic(this, &AProjectileBase::ProcessComponentHit);
+
+	SetLifeSpan(5.0f);
 	
 }
 
