@@ -25,7 +25,7 @@ EBTNodeResult::Type UBTTask_SetRandPoint::ExecuteTask(UBehaviorTreeComponent& Ow
 			GetWorld(),
 			Location,
 			Destination,
-			1500.0f
+			2500.0f
 		))
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsVector(
