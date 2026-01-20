@@ -2,6 +2,7 @@
 
 
 #include "RoboMonsterAnimInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void URoboMonsterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
@@ -10,6 +11,7 @@ void URoboMonsterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	ARoboMonster* RMonster = Cast<ARoboMonster>(TryGetPawnOwner());
 	if (RMonster)
 	{
-		CurrentState = RMonster->GetCurrentState();
+		Speed = RMonster->GetCharacterMovement()->Velocity.Size2D();
+		CurrentState = RMonster->CurrentState;
 	}
 }

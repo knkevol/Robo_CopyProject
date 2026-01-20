@@ -20,5 +20,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterData")
 	EMonsterState CurrentState;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterData")
+	float Speed;
 	
 };

@@ -9,6 +9,7 @@
 #include "BrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+
 ARoboMonster_AIC::ARoboMonster_AIC()
 {
 	Perception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception"));
@@ -30,6 +31,7 @@ void ARoboMonster_AIC::OnPossess(APawn* InPawn)
 
 	if (RunBTAsset)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ARoboMonster_AIC::OnPossess"));
 		RunBehaviorTree(RunBTAsset);
 	}
 
@@ -37,7 +39,7 @@ void ARoboMonster_AIC::OnPossess(APawn* InPawn)
 	//Perception->OnTargetPerceptionInfoUpdated.AddDynamic(this, &AZombie_AIC::ProcessActorPerceptionInfo);
 	Perception->OnTargetPerceptionForgotten.AddDynamic(this, &ARoboMonster_AIC::ProcessPerceptionForget);
 	Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ARoboMonster_AIC::ProcessActorPerception);
-	//SetGenericTeamId(3);
+	SetGenericTeamId(3);
 }
 
 void ARoboMonster_AIC::OnUnPossess()
@@ -73,6 +75,7 @@ void ARoboMonster_AIC::ProcessActorPerception(AActor* Actor, FAIStimulus Stimulu
 				Blackboard->SetValueAsObject(TEXT("Target"), Player);
 				SetState(EMonsterState::Chase);
 				RMonster->SetState(EMonsterState::Chase);
+				RMonster->ChangeSpeed(400.0f);
 			}
 		}
 		else // ¸øºÃÀ»¶§
@@ -89,6 +92,7 @@ void ARoboMonster_AIC::ProcessActorPerception(AActor* Actor, FAIStimulus Stimulu
 				Blackboard->SetValueAsObject(TEXT("Target"), nullptr);
 				SetState(EMonsterState::Normal);
 				RMonster->SetState(EMonsterState::Normal);
+				RMonster->ChangeSpeed(80.0f);
 			}
 		}
 	}
@@ -111,6 +115,7 @@ void ARoboMonster_AIC::ProcessPerceptionForget(AActor* Actor)
 		Blackboard->SetValueAsObject(TEXT("Target"), nullptr);
 		SetState(EMonsterState::Normal);
 		RMonster->SetState(EMonsterState::Normal);
+		RMonster->ChangeSpeed(80.0f);
 	}
 }
 

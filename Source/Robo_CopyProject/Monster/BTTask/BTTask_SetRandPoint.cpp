@@ -10,7 +10,7 @@
 
 UBTTask_SetRandPoint::UBTTask_SetRandPoint()
 {
-	NodeName = "SetRandPoint";
+	NodeName = "SetRandomPoint";
 }
 
 EBTNodeResult::Type UBTTask_SetRandPoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -25,7 +25,7 @@ EBTNodeResult::Type UBTTask_SetRandPoint::ExecuteTask(UBehaviorTreeComponent& Ow
 			GetWorld(),
 			Location,
 			Destination,
-			5000.0f
+			1500.0f
 		))
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsVector(

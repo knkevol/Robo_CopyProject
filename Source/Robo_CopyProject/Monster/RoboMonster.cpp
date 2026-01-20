@@ -86,3 +86,8 @@ float ARoboMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	return DamageAmount;
 }
 
+void ARoboMonster::ChangeSpeed(float NewMaxSpeed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = NewMaxSpeed;
+}
+

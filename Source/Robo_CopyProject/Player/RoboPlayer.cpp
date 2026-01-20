@@ -9,12 +9,14 @@
 #include "Components/ChildActorComponent.h"
 #include "../Item/PickUpItemBase.h"
 #include "../Weapon/WeaponBase.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
 #include "../Widget/PlayerWidget.h"
 #include "../MapActor/InteractableActor.h"
 #include "../MapActor/DoorActor.h"
+
 
 // Sets default values
 ARoboPlayer::ARoboPlayer()
@@ -31,13 +33,9 @@ ARoboPlayer::ARoboPlayer()
 	Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	Capsule->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
 
-	/*if (GetMesh())
-	{
-		GetMesh()->SetOwnerNoSee(false);
-		GetMesh()->SetOnlyOwnerSee(false);
-		GetMesh()->SetVisibility(true, true);
-	}*/
+	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliSource"));
 
+	SetGenericTeamId(1);
 }
 
 // Called when the game starts or when spawned

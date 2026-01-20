@@ -12,6 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedHP, const float, Percent);
 
 class UInputAction;
 class AWeaponBase;
+class UAIPerceptionStimuliSourceComponent;
 
 UENUM(BlueprintType)
 enum class EWeaponState : uint8
@@ -25,7 +26,7 @@ enum class EWeaponState : uint8
 };
 
 UCLASS()
-class ROBO_COPYPROJECT_API ARoboPlayer : public ACharacter, public IInterface_Press
+class ROBO_COPYPROJECT_API ARoboPlayer : public ACharacter, public IInterface_Press, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -153,6 +154,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
 	TObjectPtr<UInputAction> IA_DoorOpen;
+
+	// ---------------AI
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboAI")
+	TObjectPtr<UAIPerceptionStimuliSourceComponent> StimuliSource;
 
 
 	UFUNCTION(BlueprintCallable)

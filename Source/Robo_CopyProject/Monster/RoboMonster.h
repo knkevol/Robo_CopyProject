@@ -28,8 +28,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
-	EMonsterState CurrentState;
+	
 
 public:	
 	// Called every frame
@@ -43,8 +42,13 @@ public:
 
 	void SetState(EMonsterState NewState);
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
+	EMonsterState CurrentState;
+
 	FORCEINLINE const EMonsterState GetCurrentState() { return CurrentState; }
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION(BlueprintCallable)
+	void ChangeSpeed(float NewMaxSpeed);
 };
