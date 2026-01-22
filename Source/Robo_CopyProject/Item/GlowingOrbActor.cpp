@@ -57,7 +57,7 @@ void AGlowingOrbActor::Tick(float DeltaTime)
 
 void AGlowingOrbActor::OnRep_OrbExist()
 {
-	const uint8 bVisible = bOrbExist;
+	const bool bVisible = bOrbExist;
 
 	OrbMesh->SetVisibility(bVisible);
 	OrbCollision->SetCollisionEnabled(bVisible ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
