@@ -7,6 +7,7 @@
 #include "GlowingOrbActor.generated.h"
 
 class USceneComponent;
+class USphereComponent;
 class UStaticMeshComponent;
 class UNiagaraComponent;
 
@@ -31,27 +32,28 @@ public:
 	TObjectPtr<USceneComponent> Root;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	TObjectPtr<USphereComponent> OrbCollision;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	TObjectPtr<UStaticMeshComponent> OrbMesh;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	TObjectPtr<UNiagaraComponent> OrbFX;
 
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData", ReplicatedUsing = "OnRep_OrbActive")
-	uint8 bOrbActive : 1 = true;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData", ReplicatedUsing = "OnRep_OrbExist")
+	uint8 bOrbExist : 1 = false;
 
-	// 오브 색상
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData", ReplicatedUsing = "OnRep_OrbColor")
-	FLinearColor OrbColor;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
+	float HealAmount = 20.f;
 
-	UFUNCTION()
-	void OnRep_OrbActive();
 
 	UFUNCTION()
-	void OnRep_OrbColor();
+	void OnRep_OrbExist();
 
-	void SetOrbActive(bool bNewActive);
-	void SetOrbColor(const FLinearColor& NewColor);
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

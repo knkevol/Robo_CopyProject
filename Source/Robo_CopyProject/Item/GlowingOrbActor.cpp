@@ -4,21 +4,30 @@
 #include "GlowingOrbActor.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SphereComponent.h"
 #include "NiagaraComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "GameFramework/Character.h"
 
 // Sets default values
 AGlowingOrbActor::AGlowingOrbActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+	SetReplicateMovement(true);
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	SetRootComponent(Root);
 
+	OrbCollision = CreateDefaultSubobject<USphereComponent>(TEXT("OrbCollision"));
+	OrbCollision->SetupAttachment(Root);
+	OrbCollision->SetSphereRadius(60.0f);
+	OrbCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	OrbCollision->SetGenerateOverlapEvents(true);
+
 	OrbMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OrbMesh"));
 	OrbMesh->SetupAttachment(Root);
+	OrbMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	OrbMesh->SetIsReplicated(true);
 
 	OrbFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("OrbFX"));
@@ -32,14 +41,10 @@ void AGlowingOrbActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority())
-	{
-		bOrbActive = true;
-		OrbColor = FLinearColor::Green;
-	}
+	OrbCollision->OnComponentBeginOverlap.AddDynamic(this, &AGlowingOrbActor::OnOverlapBegin);
 
-	OnRep_OrbActive();
-	OnRep_OrbColor();
+	//클라이언트 접속 타이밍 대응
+	OnRep_OrbExist();
 	
 }
 
@@ -50,27 +55,59 @@ void AGlowingOrbActor::Tick(float DeltaTime)
 
 }
 
-void AGlowingOrbActor::OnRep_OrbActive()
+void AGlowingOrbActor::OnRep_OrbExist()
 {
+	const uint8 bVisible = bOrbExist;
+
+	OrbMesh->SetVisibility(bVisible);
+	OrbCollision->SetCollisionEnabled(bVisible ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
+
+	if (OrbFX)
+	{
+		if (bVisible)
+		{
+			OrbFX->Activate();
+		}
+		else
+		{
+			OrbFX->Deactivate();
+		}
+	}
 }
 
-void AGlowingOrbActor::OnRep_OrbColor()
+void AGlowingOrbActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-}
+	if (!HasAuthority())
+	{
+		return;
+	}
 
-void AGlowingOrbActor::SetOrbActive(bool bNewActive)
-{
-	if (!HasAuthority()) return;
+	if (!bOrbExist)
+	{
+		return;
+	}
 
-	bOrbActive = bNewActive;
-	OnRep_OrbActive();
-}
+	ACharacter* Player = Cast<ACharacter>(OtherActor);
+	if (!Player)
+	{
+		return;
+	}
 
-void AGlowingOrbActor::SetOrbColor(const FLinearColor& NewColor)
-{
+	UE_LOG(LogTemp, Log, TEXT("Heal Orb consumed: +%f"), HealAmount);
+
+	bOrbExist = false;
+	OnRep_OrbExist();
+
+	Destroy();
+
+	
 }
 
 void AGlowingOrbActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AGlowingOrbActor, bOrbExist);
+	DOREPLIFETIME(AGlowingOrbActor, HealAmount);
 }
 
