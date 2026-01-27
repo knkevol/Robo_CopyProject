@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/WidgetComponent.h"
 #include "RoboMonster.generated.h"
 
 UENUM(BlueprintType)
@@ -28,16 +29,34 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION()
+	void OnRep_MonsterCurrentHP();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterUI")
+	TObjectPtr<UWidgetComponent> MonsterHPWidget;
+
+	void UpdateMonsterHPBar(); // 실제 UI를 갱신하는 내부 함수
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multi_MonsterDie();
+	void Multi_MonsterDie_Implementation();
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multi_SpawnHitEffect(FVector_NetQuantize Location, FRotator Rotation);
+	void Multi_SpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation);
+
 	
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat", ReplicatedUsing = "OnRep_MonsterCurrentHP")
 	float CurrentHP = 100;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat", Replicated)
 	float MaxHP = 100;
 
 	void SetState(EMonsterState NewState);
@@ -48,6 +67,9 @@ public:
 	FORCEINLINE const EMonsterState GetCurrentState() { return CurrentState; }
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MonsterEffect")
+	TObjectPtr<UParticleSystem> BloodEffect;
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeSpeed(float NewMaxSpeed);
