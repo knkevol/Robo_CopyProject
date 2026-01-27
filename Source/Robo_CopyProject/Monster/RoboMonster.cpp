@@ -19,6 +19,7 @@ ARoboMonster::ARoboMonster()
 	MonsterHPWidget->SetupAttachment(GetMesh());
 	MonsterHPWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
 	MonsterHPWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	MonsterHPWidget->SetIsReplicated(true);
 
 }
 
@@ -39,6 +40,7 @@ void ARoboMonster::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 void ARoboMonster::OnRep_MonsterCurrentHP()
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnRep_MonsterCurrentHP"));
 	UpdateMonsterHPBar();
 }
 
@@ -55,8 +57,12 @@ void ARoboMonster::UpdateMonsterHPBar()
 			{
 				float Percent = CurrentHP / MaxHP;
 				HPBar->SetPercent(Percent);
-				UE_LOG(LogTemp, Warning, TEXT("UpdateMonsterHPBar : %f"), Percent);
+				UE_LOG(LogTemp, Warning, TEXT("HP Update: %f / %f = %f"), CurrentHP, MaxHP, Percent);
 			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("HPWidget X"));
 		}
 	}
 }
@@ -118,10 +124,9 @@ float ARoboMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 		return DamageAmount;
 	}
 
+	CurrentHP -= DamageAmount;
 	UpdateMonsterHPBar();
-
 	Multi_SpawnHitEffect(GetActorLocation(), GetActorRotation());
-
 
 	if (CurrentHP <= 0.0f)
 	{
