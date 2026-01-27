@@ -39,6 +39,7 @@ protected:
 
 	void UpdateMonsterHPBar(); // 실제 UI를 갱신하는 내부 함수
 
+	// ---------------RPC
 	UFUNCTION(NetMulticast, Reliable)
 	void Multi_MonsterDie();
 	void Multi_MonsterDie_Implementation();
@@ -47,6 +48,9 @@ protected:
 	void Multi_SpawnHitEffect(FVector_NetQuantize Location, FRotator Rotation);
 	void Multi_SpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multi_MonsterAttackAnimation();
+	void Multi_MonsterAttackAnimation_Implementation();
 	
 
 public:	
@@ -71,6 +75,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MonsterEffect")
 	TObjectPtr<UParticleSystem> BloodEffect;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterMontage")
+	TObjectPtr<UAnimMontage> AttackMontage;
+
 	UFUNCTION(BlueprintCallable)
 	void ChangeSpeed(float NewMaxSpeed);
+
+	//---------------Attack
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
+	float AttackRange = 100.0f;
+
+	// 공격 반지름 (구체 크기)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
+	float AttackRadius = 50.0f;
+
+	// 공격 데미지
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
+	float AttackDamage = 10.0f;
+
+	void ProcessAttackHit();
 };

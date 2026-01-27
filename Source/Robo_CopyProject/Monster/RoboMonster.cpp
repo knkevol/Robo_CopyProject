@@ -4,6 +4,8 @@
 #include "RoboMonster.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 #include "RoboMonster_AIC.h"
 #include "Net/UnrealNetwork.h" //Replicated
 #include "Components/ProgressBar.h"
@@ -117,6 +119,14 @@ void ARoboMonster::Multi_SpawnHitEffect_Implementation(FVector_NetQuantize Locat
 	}
 }
 
+void ARoboMonster::Multi_MonsterAttackAnimation_Implementation()
+{
+	if (AttackMontage)
+	{
+		PlayAnimMontage(AttackMontage);
+	}
+}
+
 // Called every frame
 void ARoboMonster::Tick(float DeltaTime)
 {
@@ -127,6 +137,11 @@ void ARoboMonster::Tick(float DeltaTime)
 void ARoboMonster::SetState(EMonsterState NewState)
 {
 	CurrentState = NewState;
+
+	if (NewState == EMonsterState::Battle && HasAuthority())
+	{
+		Multi_MonsterAttackAnimation();
+	}
 }
 
 float ARoboMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -155,5 +170,59 @@ float ARoboMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 void ARoboMonster::ChangeSpeed(float NewMaxSpeed)
 {
 	GetCharacterMovement()->MaxWalkSpeed = NewMaxSpeed;
+}
+
+void ARoboMonster::ProcessAttackHit()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	FHitResult HitResult;
+	// 공격 시작 지점: 몬스터 위치에서 약간 앞쪽
+	FVector Start = GetActorLocation() + GetActorForwardVector() * 50.0f;
+	// 공격 종료 지점: 시작 지점에서 사거리만큼 앞쪽
+	FVector End = Start + GetActorForwardVector() * AttackRange;
+
+	// 충돌 설정: 자기 자신은 무시
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	// 2. 구체 형태(Sphere)로 전방 스윕 검사
+	// ECC_Pawn 채널을 사용하여 플레이어를 찾습니다.
+	bool bHasHit = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		Start,
+		End,
+		FQuat::Identity,
+		ECC_Pawn,
+		FCollisionShape::MakeSphere(AttackRadius),
+		Params
+	);
+
+	// 3. 디버그 드로잉 (실제 작업 시 위치 확인용, 완료 후 주석 처리 가능)
+	FColor DrawColor = bHasHit ? FColor::Green : FColor::Red;
+	DrawDebugSphere(GetWorld(), End, AttackRadius, 16, DrawColor, false, 2.0f);
+
+	// 4. 실제로 무언가 맞았다면 데미지 전달
+	if (bHasHit)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		if (HitActor)
+		{
+			// 여기서 플레이어의 TakeDamage가 실행됩니다.
+			UGameplayStatics::ApplyDamage(
+				HitActor,
+				AttackDamage,
+				GetController(),
+				this,
+				UDamageType::StaticClass()
+			);
+
+			// 로그로 확인
+			UE_LOG(LogTemp, Log, TEXT("Monster Hit Actor: %s"), *HitActor->GetName());
+		}
+	}
 }
 
