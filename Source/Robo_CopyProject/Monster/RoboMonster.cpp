@@ -69,22 +69,38 @@ void ARoboMonster::UpdateMonsterHPBar()
 
 void ARoboMonster::Multi_MonsterDie_Implementation()
 {
+	if (!IsValid(this))
+	{
+		return;
+	}
+
+	SetState(EMonsterState::Death);
+
 	if (HasAuthority())
 	{
 		if (CurrentHP <= 0)
 		{
-			SetState(EMonsterState::Death);
 			ARoboMonster_AIC* AIC = Cast<ARoboMonster_AIC>(GetController());
 			if (AIC)
 			{
 				AIC->SetState(EMonsterState::Death);
 			}
-		}
+		}  
 	}
 
-	GetController()->SetActorEnableCollision(false);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	GetMesh()->SetSimulatePhysics(true);
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->StopMovementImmediately();
+		MoveComp->DisableMovement();
+		MoveComp->SetComponentTickEnabled(false); // 더 이상 위치 보정을 하지 않음
+	}
+
+	SetActorEnableCollision(false);
+	if (GetMesh())
+	{
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetMesh()->SetSimulatePhysics(true);
+	}
 }
 
 void ARoboMonster::Multi_SpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation)
