@@ -14,6 +14,7 @@
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
 #include "../Widget/PlayerWidget.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "../MapActor/InteractableActor.h"
 #include "../MapActor/DoorActor.h"
 
@@ -99,6 +100,7 @@ void ARoboPlayer::SetPlayerWidget(UPlayerWidget* InWidget)
 
 void ARoboPlayer::OnRep_CurrentHP()
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnRep_CurrentHP"));
 	OnHpChanged.Broadcast(CurHp / MaxHp);
 }
 
@@ -111,27 +113,30 @@ void ARoboPlayer::ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActo
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("ProcessBeginOverlap"));
-	//APickUpItemBase* PickedItem = Cast<APickUpItemBase>(OtherActor);
 
-	//if (PickedItem)
-	//{
-	//	switch (PickedItem->ItemType)
-	//	{
-	//	case EItemType::Weapon:
-	//		EquipItem(PickedItem);
-	//		break;
-	//	case EItemType::Item:
-	//		UseItem(PickedItem);
-	//		break;
-	//	}
+}
 
-	//	PickedItem->SetOwner(this);
+float ARoboPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::TakeDamage"));
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	//	if (!PickedItem->bIsItemDestroy)
-	//	{
-	//		PickedItem->Destroy();
-	//	}
-	//}
+	if (CurHp <= 0.0f)
+	{
+		return DamageAmount;
+	}
+
+	CurHp -= DamageAmount;
+	UE_LOG(LogTemp, Warning, TEXT("Player TakeDamage : %f"), CurHp);
+	OnRep_CurrentHP();
+	Multi_PlayerSpawnHitEffect(GetActorLocation(), GetActorRotation());
+
+	if (CurHp <= 0.0f)
+	{
+		Multi_PlayerDie();
+	}
+
+	return 0.0f;
 }
 
 void ARoboPlayer::EquipItem(APickUpItemBase* PickedItem)
@@ -315,6 +320,62 @@ void ARoboPlayer::Server_StopFire_Implementation()
 	if (ChildWeapon)
 	{
 		ChildWeapon->StopFire();
+	}
+}
+
+void ARoboPlayer::Multi_PlayerDie_Implementation()
+{
+	if (bIsPlayerDead)
+	{
+		return;
+	}
+
+	bIsPlayerDead = true;
+
+	if (DeathMontage)
+	{
+		UAnimInstance* DeathAnim = GetMesh()->GetAnimInstance();
+		if (DeathAnim)
+		{
+			DeathAnim->Montage_Play(DeathMontage);
+		}
+	}
+
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->StopMovementImmediately();
+		MoveComp->DisableMovement();
+		MoveComp->SetComponentTickEnabled(false);
+	}
+
+	if (DeathMontage == nullptr) // 몽타주가 없을 때만 랙돌 실행
+	{
+		SetActorEnableCollision(false);
+		if (GetMesh())
+		{
+			GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+			GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			GetMesh()->SetSimulatePhysics(true);
+		}
+	}
+	else
+	{
+		// 몽타주 재생 시에는 애니메이션이 우선이므로 물리 시뮬레이션 끔.
+		GetMesh()->SetSimulatePhysics(false);
+	}
+}
+
+void ARoboPlayer::Multi_PlayerSpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation)
+{
+	if (BloodEffect)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player BloodEffect"));
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			BloodEffect,
+			Location,
+			Rotation
+		);
 	}
 }
 

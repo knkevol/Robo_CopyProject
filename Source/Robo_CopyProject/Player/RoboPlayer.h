@@ -57,6 +57,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
 	TObjectPtr<class AWeaponBase> CurWeapon = nullptr;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
+	uint8 bIsPlayerDead : 1 = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerWidget")
 	TObjectPtr<class UPlayerWidget> PlayerWidgetObject;
 
@@ -78,21 +81,13 @@ public:
 	UFUNCTION()
 	void ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
-	UFUNCTION()
-	void OnBeginOverlap(
-		UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult);
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION()
-	void OnEndOverlap(
-		UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex);
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 
 
@@ -142,6 +137,16 @@ public:
 	void Server_StopFire();
 	void Server_StopFire_Implementation();
 
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multi_PlayerDie();
+	void Multi_PlayerDie_Implementation();
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multi_PlayerSpawnHitEffect(FVector_NetQuantize Location, FRotator Rotation);
+	void Multi_PlayerSpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation);
+
+
 	//----------------Input Action
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
 	TObjectPtr<UInputAction> IA_Equip;
@@ -154,6 +159,18 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
 	TObjectPtr<UInputAction> IA_DoorOpen;
+
+
+	// ---------------Montage
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboMontage")
+	TObjectPtr<UAnimMontage> HitMontage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboMontage")
+	TObjectPtr<UAnimMontage> DeathMontage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboEffect")
+	TObjectPtr<UParticleSystem> BloodEffect;
+
 
 	// ---------------AI
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboAI")

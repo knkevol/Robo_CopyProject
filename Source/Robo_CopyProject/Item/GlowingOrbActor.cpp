@@ -99,8 +99,6 @@ void AGlowingOrbActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActo
 	OnRep_OrbExist();
 
 	Destroy();
-
-	
 }
 
 void AGlowingOrbActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
