@@ -47,10 +47,6 @@ protected:
 	UFUNCTION(NetMulticast, Unreliable)
 	void Multi_SpawnHitEffect(FVector_NetQuantize Location, FRotator Rotation);
 	void Multi_SpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void Multi_MonsterAttackAnimation();
-	void Multi_MonsterAttackAnimation_Implementation();
 	
 
 public:	
@@ -65,7 +61,7 @@ public:
 
 	void SetState(EMonsterState NewState);
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat", Replicated)
 	EMonsterState CurrentState;
 
 	FORCEINLINE const EMonsterState GetCurrentState() { return CurrentState; }
