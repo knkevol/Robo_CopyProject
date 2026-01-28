@@ -31,15 +31,17 @@ protected:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	// ---------------HP -----------------
 	UFUNCTION()
 	void OnRep_MonsterCurrentHP();
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterUI")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
 	TObjectPtr<UWidgetComponent> MonsterHPWidget;
 
 	void UpdateMonsterHPBar(); // 실제 UI를 갱신하는 내부 함수
+	//---------------------------------------------------
 
-	// ---------------RPC
+	// ---------------RPC-----------------
 	UFUNCTION(NetMulticast, Reliable)
 	void Multi_MonsterDie();
 	void Multi_MonsterDie_Implementation();
@@ -47,12 +49,21 @@ protected:
 	UFUNCTION(NetMulticast, Unreliable)
 	void Multi_SpawnHitEffect(FVector_NetQuantize Location, FRotator Rotation);
 	void Multi_SpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation);
+	//---------------------------------------------------
 	
+	//-------------Orb---------
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterDropItems")
+	TSubclassOf<class AGlowingOrbActor> OrbClass;
+
+	void SpawnGlowingOrb();
+
+	//------------------------------------
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//---------------MonsterStat-----------------
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat", ReplicatedUsing = "OnRep_MonsterCurrentHP")
 	float CurrentHP = 100;
 
@@ -66,18 +77,17 @@ public:
 
 	FORCEINLINE const EMonsterState GetCurrentState() { return CurrentState; }
 
+	UFUNCTION(BlueprintCallable)
+	void ChangeSpeed(float NewMaxSpeed);
+	//---------------------------------------------------
+
+
+	//------------------Attack-----------------
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MonsterEffect")
-	TObjectPtr<UParticleSystem> BloodEffect;
+	TObjectPtr<UParticleSystem> TakeDamageEffect;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterMontage")
-	TObjectPtr<UAnimMontage> AttackMontage;
-
-	UFUNCTION(BlueprintCallable)
-	void ChangeSpeed(float NewMaxSpeed);
-
-	//---------------Attack
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
 	float AttackRange = 100.0f;
 
@@ -90,4 +100,8 @@ public:
 	float AttackDamage = 10.0f;
 
 	void ProcessAttackHit();
+	//-------------------------------------------------------
+
+	
+
 };

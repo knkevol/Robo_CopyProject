@@ -10,6 +10,7 @@
 #include "Net/UnrealNetwork.h" //Replicated
 #include "Components/ProgressBar.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "../Item/GlowingOrbActor.h"
 
 // Sets default values
 ARoboMonster::ARoboMonster()
@@ -88,7 +89,10 @@ void ARoboMonster::Multi_MonsterDie_Implementation()
 			{
 				AIC->SetState(EMonsterState::Death);
 			}
-		}  
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("ARoboMonster::Multi_MonsterDie_Implementation()"));
+		SpawnGlowingOrb();
 	}
 
 	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
@@ -108,12 +112,11 @@ void ARoboMonster::Multi_MonsterDie_Implementation()
 
 void ARoboMonster::Multi_SpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation)
 {
-	if (BloodEffect)
+	if (TakeDamageEffect)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BloodEffect"));
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
-			BloodEffect,
+			TakeDamageEffect,
 			Location,
 			Rotation
 		);
@@ -210,5 +213,23 @@ void ARoboMonster::ProcessAttackHit()
 			UE_LOG(LogTemp, Log, TEXT("Monster Hit Actor: %s"), *HitActor->GetName());
 		}
 	}
+}
+
+void ARoboMonster::SpawnGlowingOrb()
+{
+	if (OrbClass == nullptr)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("ARoboMonster::SpawnGlowingOrb()"));
+	FVector OrbSpawnLocation = GetActorLocation();
+	FVector RandomOffset = FVector(FMath::RandRange(-150.f, 150.f), FMath::RandRange(-150.f, 150.f), 100.f);
+	OrbSpawnLocation += RandomOffset;
+
+	FActorSpawnParameters Params;
+	Params.Owner = this;
+
+	GetWorld()->SpawnActor<AGlowingOrbActor>(OrbClass, OrbSpawnLocation, FRotator::ZeroRotator, Params);
 }
 

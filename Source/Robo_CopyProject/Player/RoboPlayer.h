@@ -60,7 +60,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
 	uint8 bIsPlayerDead : 1 = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerWidget")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboCharacter")
 	TObjectPtr<class UPlayerWidget> PlayerWidgetObject;
 
 	void SetPlayerWidget(class UPlayerWidget* InWidget);
@@ -68,9 +68,9 @@ public:
 	UFUNCTION()
 	void OnRep_CurrentHP();
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboPlayerStat", ReplicatedUsing = "OnRep_CurrentHP")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", ReplicatedUsing = "OnRep_CurrentHP")
 	float CurHp = 200;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboPlayerStat", Replicated)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", Replicated)
 	float MaxHp = 200;
 
 	// 복제 통지 함수
@@ -115,7 +115,7 @@ public:
 	void Server_InteractDoor(AActor* Target);
 	void Server_InteractDoor_Implementation(AActor* Target);
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInteract")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
 	TObjectPtr<class AActor> FocusedActor;
 
 	UFUNCTION(BlueprintCallable)
@@ -169,11 +169,11 @@ public:
 	TObjectPtr<UAnimMontage> DeathMontage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboEffect")
-	TObjectPtr<UParticleSystem> BloodEffect;
+	TObjectPtr<UParticleSystem> TakeDamageEffect;
 
 
 	// ---------------AI
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboAI")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
 	TObjectPtr<UAIPerceptionStimuliSourceComponent> StimuliSource;
 
 
@@ -189,7 +189,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopFire();
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData", ReplicatedUsing = "OnRep_WeaponClass")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", ReplicatedUsing = "OnRep_WeaponClass")
 	TSubclassOf<AWeaponBase> CurrentWeaponClass;
 
 	UFUNCTION()

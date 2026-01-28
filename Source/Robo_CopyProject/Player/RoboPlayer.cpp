@@ -367,12 +367,11 @@ void ARoboPlayer::Multi_PlayerDie_Implementation()
 
 void ARoboPlayer::Multi_PlayerSpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation)
 {
-	if (BloodEffect)
+	if (TakeDamageEffect)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player BloodEffect"));
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
-			BloodEffect,
+			TakeDamageEffect,
 			Location,
 			Rotation
 		);

@@ -8,6 +8,7 @@
 #include "NiagaraComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Character.h"
+#include "../Player/RoboPlayer.h"
 
 // Sets default values
 AGlowingOrbActor::AGlowingOrbActor()
@@ -77,28 +78,25 @@ void AGlowingOrbActor::OnRep_OrbExist()
 
 void AGlowingOrbActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!HasAuthority())
+	if (!HasAuthority() || !bOrbExist)
 	{
+		UE_LOG(LogTemp, Log, TEXT("AGlowingOrbActor::OnOverlapBegin_!HasAuthority() || !bOrbExist"));
 		return;
 	}
 
-	if (!bOrbExist)
+	UE_LOG(LogTemp, Log, TEXT("AGlowingOrbActor::OnOverlapBegin"));
+
+	ARoboPlayer* Player = Cast<ARoboPlayer>(OtherActor);
+	if (Player)
 	{
-		return;
+		Player->CurHp = FMath::Clamp(Player->CurHp + HealAmount, 0.0f, Player->MaxHp);
+		Player->OnRep_CurrentHP(); //UI
+
+		bOrbExist = false;
+		OnRep_OrbExist();
+
+		SetLifeSpan(1.0f);
 	}
-
-	ACharacter* Player = Cast<ACharacter>(OtherActor);
-	if (!Player)
-	{
-		return;
-	}
-
-	UE_LOG(LogTemp, Log, TEXT("Heal Orb consumed: +%f"), HealAmount);
-
-	bOrbExist = false;
-	OnRep_OrbExist();
-
-	Destroy();
 }
 
 void AGlowingOrbActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
