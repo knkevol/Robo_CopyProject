@@ -26,12 +26,10 @@ public:
 
 	//-------------HP------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
-	TObjectPtr<UProgressBar> PlayerHP;
+	TObjectPtr<UProgressBar> PlayerHPBar;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
-	TObjectPtr<UTextBlock> CurHP;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
-	TObjectPtr<UTextBlock> MaxHP;
+	TObjectPtr<UTextBlock> CurHPText;
 
 	UFUNCTION()
 	void ProcessHPBar(float InPercent);

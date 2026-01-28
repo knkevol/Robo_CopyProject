@@ -6,6 +6,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
 #include "../Player/RoboPlayer.h"
+#include "../Player/RoboPlayerController.h"
 
 void UPlayerStatWidget::NativeOnInitialized()
 {
@@ -25,10 +26,14 @@ void UPlayerStatWidget::NativeOnInitialized()
 
 void UPlayerStatWidget::ProcessHPBar(float InPercent)
 {
-	if (PlayerHP)
+	if (PlayerHPBar)
 	{
+		PlayerHPBar->SetPercent(InPercent);
+	}
 
-		PlayerHP->SetPercent(InPercent);
-
+	if (CurHPText)
+	{
+		int32 HPPercent = FMath::FloorToInt(InPercent * 200.0f);
+		CurHPText->SetText(FText::FromString(FString::Printf(TEXT("%d"), HPPercent)));
 	}
 }
