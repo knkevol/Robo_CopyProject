@@ -224,7 +224,7 @@ void ARoboMonster::SpawnGlowingOrb()
 
 	UE_LOG(LogTemp, Log, TEXT("ARoboMonster::SpawnGlowingOrb()"));
 	FVector OrbSpawnLocation = GetActorLocation();
-	FVector RandomOffset = FVector(FMath::RandRange(-150.f, 150.f), FMath::RandRange(-150.f, 150.f), 100.f);
+	FVector RandomOffset = FVector(FMath::RandRange(-150.f, 150.f), FMath::RandRange(-150.f, 150.f), -55.f);
 	OrbSpawnLocation += RandomOffset;
 
 	FActorSpawnParameters Params;

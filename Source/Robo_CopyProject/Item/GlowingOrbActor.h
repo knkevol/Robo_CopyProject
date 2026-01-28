@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "GlowingOrbActor.generated.h"
 
-class USceneComponent;
 class USphereComponent;
 class UStaticMeshComponent;
 class UNiagaraComponent;
@@ -29,9 +28,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
-	TObjectPtr<USceneComponent> Root;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	TObjectPtr<USphereComponent> OrbCollision;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
@@ -42,7 +38,7 @@ public:
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData", ReplicatedUsing = "OnRep_OrbExist")
-	uint8 bOrbExist : 1 = false;
+	uint8 bOrbExist : 1 = true;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
 	float HealAmount = 20.f;
@@ -54,7 +50,6 @@ public:
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 };

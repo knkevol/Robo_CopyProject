@@ -2,7 +2,6 @@
 
 
 #include "GlowingOrbActor.h"
-#include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "NiagaraComponent.h"
@@ -17,22 +16,24 @@ AGlowingOrbActor::AGlowingOrbActor()
 	bReplicates = true;
 	SetReplicateMovement(true);
 
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
-	SetRootComponent(Root);
-
 	OrbCollision = CreateDefaultSubobject<USphereComponent>(TEXT("OrbCollision"));
-	OrbCollision->SetupAttachment(Root);
-	OrbCollision->SetSphereRadius(60.0f);
-	OrbCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	SetRootComponent(OrbCollision);
+	OrbCollision->SetSphereRadius(10.0f);
+	OrbCollision->SetCollisionProfileName(TEXT("PhysicsActor"));
 	OrbCollision->SetGenerateOverlapEvents(true);
+	OrbCollision->SetSimulatePhysics(true);
+	OrbCollision->SetEnableGravity(true);
 
 	OrbMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OrbMesh"));
-	OrbMesh->SetupAttachment(Root);
-	OrbMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	OrbMesh->SetupAttachment(OrbCollision);
 	OrbMesh->SetIsReplicated(true);
+	OrbMesh->SetSimulatePhysics(false);
+	OrbMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	OrbMesh->SetNotifyRigidBodyCollision(true); // 충돌 시 이벤트 발생 필요하면 켬
+	SetReplicateMovement(true);
 
 	OrbFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("OrbFX"));
-	OrbFX->SetupAttachment(Root);
+	OrbFX->SetupAttachment(OrbCollision);
 	OrbFX->SetAutoActivate(false);
 
 }
@@ -43,7 +44,6 @@ void AGlowingOrbActor::BeginPlay()
 	Super::BeginPlay();
 
 	OrbCollision->OnComponentBeginOverlap.AddDynamic(this, &AGlowingOrbActor::OnOverlapBegin);
-
 	//클라이언트 접속 타이밍 대응
 	OnRep_OrbExist();
 	
@@ -61,18 +61,20 @@ void AGlowingOrbActor::OnRep_OrbExist()
 	const bool bVisible = bOrbExist;
 
 	OrbMesh->SetVisibility(bVisible);
-	OrbCollision->SetCollisionEnabled(bVisible ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
+
+	if (bVisible)
+	{
+		// 핵심: 물리를 사용할 때는 QueryAndPhysics를 써야 오버랩과 물리 튕김이 둘 다 작동합니다.
+		OrbCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+	else
+	{
+		OrbCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 
 	if (OrbFX)
 	{
-		if (bVisible)
-		{
-			OrbFX->Activate();
-		}
-		else
-		{
-			OrbFX->Deactivate();
-		}
+		bVisible ? OrbFX->Activate() : OrbFX->Deactivate();
 	}
 }
 
