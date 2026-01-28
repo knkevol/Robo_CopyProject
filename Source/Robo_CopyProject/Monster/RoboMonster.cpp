@@ -223,13 +223,29 @@ void ARoboMonster::SpawnGlowingOrb()
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("ARoboMonster::SpawnGlowingOrb()"));
-	FVector OrbSpawnLocation = GetActorLocation();
-	FVector RandomOffset = FVector(FMath::RandRange(-150.f, 150.f), FMath::RandRange(-150.f, 150.f), -55.f);
-	OrbSpawnLocation += RandomOffset;
 
-	FActorSpawnParameters Params;
-	Params.Owner = this;
+	float OffsetX = FMath::RandRange(50.f, 100.f);
+	float OffsetY = FMath::RandRange(50.f, 100.f);
 
-	GetWorld()->SpawnActor<AGlowingOrbActor>(OrbClass, OrbSpawnLocation, FRotator::ZeroRotator, Params);
+	FVector MonsterLocation = GetActorLocation();
+	int32 SpawnCount = 3;
+
+	for (int32 i = 0; i < SpawnCount; i++)
+	{
+		float RandomAngle = FMath::RandRange(0.f, 360.f);
+		float AngleRad = FMath::DegreesToRadians(RandomAngle);
+		float RandomDist = FMath::RandRange(150.f, 200.f);
+
+		FVector FinalSpawnLocation = MonsterLocation;
+		FinalSpawnLocation.X += FMath::Cos(AngleRad) * RandomDist;
+		FinalSpawnLocation.Y += FMath::Sin(AngleRad) * RandomDist;
+		FinalSpawnLocation.Z -= 50.f; // 바닥 높이 조정
+
+		FActorSpawnParameters Params;
+		Params.Owner = this;
+
+		GetWorld()->SpawnActor<AGlowingOrbActor>(OrbClass, FinalSpawnLocation, FRotator::ZeroRotator, Params);
+	}
+	
 }
 

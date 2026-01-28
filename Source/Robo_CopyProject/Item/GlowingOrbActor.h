@@ -8,7 +8,6 @@
 
 class USphereComponent;
 class UStaticMeshComponent;
-class UNiagaraComponent;
 
 UCLASS()
 class ROBO_COPYPROJECT_API AGlowingOrbActor : public AActor
@@ -32,9 +31,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	TObjectPtr<UStaticMeshComponent> OrbMesh;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
-	TObjectPtr<UNiagaraComponent> OrbFX;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData", ReplicatedUsing = "OnRep_OrbExist")

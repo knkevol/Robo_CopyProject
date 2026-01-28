@@ -32,10 +32,6 @@ AGlowingOrbActor::AGlowingOrbActor()
 	OrbMesh->SetNotifyRigidBodyCollision(true); // 충돌 시 이벤트 발생 필요하면 켬
 	SetReplicateMovement(true);
 
-	OrbFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("OrbFX"));
-	OrbFX->SetupAttachment(OrbCollision);
-	OrbFX->SetAutoActivate(false);
-
 }
 
 // Called when the game starts or when spawned
@@ -70,11 +66,6 @@ void AGlowingOrbActor::OnRep_OrbExist()
 	else
 	{
 		OrbCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
-
-	if (OrbFX)
-	{
-		bVisible ? OrbFX->Activate() : OrbFX->Deactivate();
 	}
 }
 
