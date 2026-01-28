@@ -33,7 +33,7 @@ void UPlayerStatWidget::ProcessHPBar(float InPercent)
 
 	if (CurHPText)
 	{
-		int32 HPPercent = FMath::FloorToInt(InPercent * 200.0f);
+		int32 HPPercent = FMath::FloorToInt(InPercent * 50.0f);
 		CurHPText->SetText(FText::FromString(FString::Printf(TEXT("%d"), HPPercent)));
 	}
 }

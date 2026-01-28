@@ -325,12 +325,21 @@ void ARoboPlayer::Server_StopFire_Implementation()
 
 void ARoboPlayer::Multi_PlayerDie_Implementation()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::Multi_PlayerDie_Implementation()"));
 	if (bIsPlayerDead)
 	{
 		return;
 	}
-
 	bIsPlayerDead = true;
+
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->StopMovementImmediately();
+		MoveComp->DisableMovement();
+		MoveComp->SetComponentTickEnabled(false);
+	}
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (DeathMontage)
 	{
@@ -340,15 +349,7 @@ void ARoboPlayer::Multi_PlayerDie_Implementation()
 			DeathAnim->Montage_Play(DeathMontage);
 		}
 	}
-
-	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
-	{
-		MoveComp->StopMovementImmediately();
-		MoveComp->DisableMovement();
-		MoveComp->SetComponentTickEnabled(false);
-	}
-
-	if (DeathMontage == nullptr) // 몽타주가 없을 때만 랙돌 실행
+	else if (DeathMontage == nullptr) // 몽타주가 없을 때만 랙돌 실행
 	{
 		SetActorEnableCollision(false);
 		if (GetMesh())

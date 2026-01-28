@@ -69,9 +69,9 @@ public:
 	void OnRep_CurrentHP();
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", ReplicatedUsing = "OnRep_CurrentHP")
-	float CurHp = 200;
+	float CurHp = 50;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", Replicated)
-	float MaxHp = 200;
+	float MaxHp = 50;
 
 	// 복제 통지 함수
 	UPROPERTY(BlueprintAssignable)
