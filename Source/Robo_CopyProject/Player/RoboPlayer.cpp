@@ -415,6 +415,8 @@ void ARoboPlayer::Multi_PlayerSpawnHitEffect_Implementation(FVector_NetQuantize 
 
 void ARoboPlayer::Input_LevelUpBenefit()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Input_LevelUpBenefit : %s"), LevelUpWidgetObject ? *LevelUpWidgetObject->GetName() : TEXT("None"));
+	UE_LOG(LogTemp, Warning, TEXT("Input_LevelUpBenefit : %d"), LevelUpWidgetObject->IsInViewport());
 	if (LevelUpWidgetObject && LevelUpWidgetObject->IsInViewport())
 	{
 		LevelUpWidgetObject->ToggleScreen();
