@@ -21,24 +21,24 @@ class ROBO_COPYPROJECT_API UPlayerStatWidget : public UUserWidget
 public:
 	virtual void NativeOnInitialized() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget", meta = (WidgetBind))
 	TObjectPtr<UImage> GuardianImage;
 
 	//-------------HP------------
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget", meta = (WidgetBind))
 	TObjectPtr<UProgressBar> PlayerHPBar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget", meta = (WidgetBind))
 	TObjectPtr<UTextBlock> CurHPText;
 
 	UFUNCTION()
 	void ProcessHPBar(float InPercent);
 
 	//-------------Level------------
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget", meta = (WidgetBind))
 	TObjectPtr<UProgressBar> PlayerXPBar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget", meta = (WidgetBind))
 	TObjectPtr<UTextBlock> PlayerLevelText;
 
 	UFUNCTION()

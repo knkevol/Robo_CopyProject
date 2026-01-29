@@ -15,16 +15,23 @@ class ROBO_COPYPROJECT_API ARoboPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
+	virtual void BeginPlay() override;
+
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void OnUnPossess() override;
 
-	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboPlayerWidget")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
 	TSubclassOf<class UPlayerWidget> PlayerWidgetClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboPlayerWidget")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
 	TObjectPtr<class UPlayerWidget> PlayerWidgetObject;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
+	TSubclassOf<class ULevelUpWidget> LevelUpWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
+	TObjectPtr<class ULevelUpWidget> LevelUpWidgetObject;
 
 	
 };

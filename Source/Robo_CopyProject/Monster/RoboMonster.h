@@ -85,7 +85,7 @@ public:
 	void ChangeSpeed(float NewMaxSpeed);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
-	float XPValue = 50.0f;
+	float XPValue = 100.0f; //temp
 	//---------------------------------------------------
 
 

@@ -258,6 +258,7 @@ void ARoboMonster::AfterDie(AActor* InTargetPlayer)
 	ARoboPlayer* Player = Cast<ARoboPlayer>(InTargetPlayer);
 	if (Player)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Monster XP : %f"), XPValue);
 		Player->AddPlayerXP(XPValue);
 	}
 }

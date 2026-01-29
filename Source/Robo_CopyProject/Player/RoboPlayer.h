@@ -60,11 +60,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
 	uint8 bIsPlayerDead : 1 = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboCharacter")
-	TObjectPtr<class UPlayerWidget> PlayerWidgetObject;
-
-	void SetPlayerWidget(class UPlayerWidget* InWidget);
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", ReplicatedUsing = "OnRep_CurrentHP")
 	float CurHp = 200;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", Replicated)
@@ -83,6 +78,18 @@ public:
 	float MaxXP = 100.0f;
 
 	void AddPlayerXP(float InAmount);
+
+	//-----------------------Widget----------------------
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
+	TObjectPtr<class UPlayerWidget> PlayerWidgetObject;
+
+	void SetPlayerWidget(class UPlayerWidget* InWidget);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
+	TObjectPtr<class ULevelUpWidget> LevelUpWidgetObject;
+
+	void SetLevelUpWidget(class ULevelUpWidget* InWidget);
+	//------------------------------------------------------------------
 	
 	// -------------Delegate
 	UFUNCTION()
@@ -166,6 +173,12 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
 	TObjectPtr<UInputAction> IA_DoorOpen;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")
+	TObjectPtr<UInputAction> IA_LevelUpBenefit;
+
+	//Not Network
+	void Input_LevelUpBenefit();
 
 
 	// ---------------Montage

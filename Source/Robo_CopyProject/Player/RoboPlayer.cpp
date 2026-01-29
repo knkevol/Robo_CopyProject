@@ -24,6 +24,7 @@
 
 #include "../Widget/PlayerWidget.h"
 #include "../Widget/PlayerStatWidget.h"
+#include "../Widget/LevelUpWidget.h"
 
 
 // Sets default values
@@ -101,6 +102,8 @@ void ARoboPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 		UIC->BindAction(IA_Fire, ETriggerEvent::Started, this, &ARoboPlayer::StartFire);
 		UIC->BindAction(IA_Fire, ETriggerEvent::Completed, this, &ARoboPlayer::StopFire);
+
+		UIC->BindAction(IA_LevelUpBenefit, ETriggerEvent::Completed, this, &ARoboPlayer::Input_LevelUpBenefit); //T
 	}
 
 }
@@ -118,6 +121,11 @@ void ARoboPlayer::SetPlayerWidget(UPlayerWidget* InWidget)
 	PlayerWidgetObject = InWidget;
 }
 
+void ARoboPlayer::SetLevelUpWidget(ULevelUpWidget* InWidget)
+{
+	LevelUpWidgetObject = InWidget;
+}
+
 void ARoboPlayer::OnRep_CurrentHP()
 {
 	OnHpChanged.Broadcast(CurHp / MaxHp);
@@ -127,7 +135,6 @@ void ARoboPlayer::AddPlayerXP(float InAmount)
 {
 	CurXP += InAmount;
 
-	
 	if (CurXP >= MaxXP)
 	{
 		CurXP = 0.0f;
@@ -135,6 +142,17 @@ void ARoboPlayer::AddPlayerXP(float InAmount)
 		if (PS)
 		{
 			PS->LevelUp();
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("LevelUpWidgetObject : %s"), LevelUpWidgetObject ? *LevelUpWidgetObject->GetName() : TEXT("None"));
+		if (LevelUpWidgetObject)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::AddPlayerXP_LevelUpWidgetObject"));
+			LevelUpWidgetObject->InitLevelUpScreen(); // 초기 상태 설정
+			if (!LevelUpWidgetObject->IsInViewport())
+			{
+				LevelUpWidgetObject->AddToViewport();
+			}
 		}
 	}
 
@@ -272,7 +290,6 @@ AActor* ARoboPlayer::FindNearestActor() const
 		if (!Actor)
 			continue;
 
-		// 🔥 인터페이스 필터
 		if (!Actor->GetClass()->ImplementsInterface(UInterface_Press::StaticClass()))
 			continue;
 
@@ -393,6 +410,15 @@ void ARoboPlayer::Multi_PlayerSpawnHitEffect_Implementation(FVector_NetQuantize 
 			Location,
 			Rotation
 		);
+	}
+}
+
+void ARoboPlayer::Input_LevelUpBenefit()
+{
+	if (LevelUpWidgetObject && LevelUpWidgetObject->IsInViewport())
+	{
+		LevelUpWidgetObject->ToggleScreen();
+		UE_LOG(LogTemp, Log, TEXT("T Key Pressed: Toggling LevelUp Screens"));
 	}
 }
 
