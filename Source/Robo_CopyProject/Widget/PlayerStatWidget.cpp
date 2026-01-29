@@ -33,7 +33,23 @@ void UPlayerStatWidget::ProcessHPBar(float InPercent)
 
 	if (CurHPText)
 	{
-		int32 HPPercent = FMath::FloorToInt(InPercent * 50.0f);
+		int32 HPPercent = FMath::FloorToInt(InPercent * 200.0f);
 		CurHPText->SetText(FText::FromString(FString::Printf(TEXT("%d"), HPPercent)));
 	}
+}
+
+void UPlayerStatWidget::ProcessXPBar(float InPercent)
+{
+	UE_LOG(LogTemp, Log, TEXT("UPlayerStatWidget::ProcessXPBar"));
+	if (PlayerXPBar)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UPlayerStatWidget::ProcessXPBar_PlayerXPBar"));
+		PlayerXPBar->SetPercent(InPercent);
+	}
+
+	if (PlayerLevelText)
+	{
+
+	}
+
 }

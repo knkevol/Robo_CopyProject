@@ -33,13 +33,14 @@ public:
 
 	UFUNCTION()
 	void ProcessHPBar(float InPercent);
-	
-
 
 	//-------------Level------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
-	TObjectPtr<UProgressBar> PlayerXP;
+	TObjectPtr<UProgressBar> PlayerXPBar;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStat", meta = (WidgetBind))
-	TObjectPtr<UTextBlock> PlayerLevel;
+	TObjectPtr<UTextBlock> PlayerLevelText;
+
+	UFUNCTION()
+	void ProcessXPBar(float InPercent);
 };

@@ -78,6 +78,9 @@ void AProjectileBase::ProcessComponentHit(UPrimitiveComponent* HitComponent, AAc
 			this,
 			UDamageTypeBase::StaticClass()
 		);
+
+		UE_LOG(LogTemp, Log, TEXT("AProjectileBase::ProcessComponentHit  Hit.GetActor: %s"), Hit.GetActor() ? *Hit.GetActor()->GetName() : TEXT("None"));
+		UE_LOG(LogTemp, Log, TEXT("AProjectileBase::ProcessComponentHit Pawn: %s"), Pawn ? *Pawn->GetName() : TEXT("None"));
 	}
 }
 

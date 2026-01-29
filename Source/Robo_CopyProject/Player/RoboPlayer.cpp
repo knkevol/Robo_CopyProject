@@ -3,20 +3,26 @@
 
 #include "RoboPlayer.h"
 #include "RoboPlayerController.h"
+
 #include "GameframeWork/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ChildActorComponent.h"
-#include "../Item/PickUpItemBase.h"
-#include "../Weapon/WeaponBase.h"
-#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
-#include "../Widget/PlayerWidget.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+
+#include "../Item/PickUpItemBase.h"
+#include "../Weapon/WeaponBase.h"
+
 #include "../MapActor/InteractableActor.h"
 #include "../MapActor/DoorActor.h"
+
+#include "../Widget/PlayerWidget.h"
+#include "../Widget/PlayerStatWidget.h"
 
 
 // Sets default values
@@ -58,8 +64,15 @@ void ARoboPlayer::BeginPlay()
 		//GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 	}
 
-	OnActorBeginOverlap.AddDynamic(this, &ARoboPlayer::ProcessBeginOverlap);
+	//XP Widget 초기값 업데이트
+	if (PlayerWidgetObject && PlayerWidgetObject->PlayerStatWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::BeginPlay()_PlayerWidgetObject"));
+		PlayerWidgetObject->PlayerStatWidget->ProcessXPBar(CurXP / MaxXP);
+	}
 
+	//Delegate
+	OnActorBeginOverlap.AddDynamic(this, &ARoboPlayer::ProcessBeginOverlap);
 	UCapsuleComponent* Capsule = GetCapsuleComponent();
 	Capsule->OnComponentBeginOverlap.AddDynamic(this,&ARoboPlayer::OnBeginOverlap);
 	Capsule->OnComponentEndOverlap.AddDynamic(this,	&ARoboPlayer::OnEndOverlap);
@@ -77,7 +90,6 @@ void ARoboPlayer::Tick(float DeltaTime)
 void ARoboPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	UE_LOG(LogTemp, Warning, TEXT("SetupPlayerInputComponent"));
 	UEnhancedInputComponent* UIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (UIC)
 	{
@@ -107,8 +119,26 @@ void ARoboPlayer::SetPlayerWidget(UPlayerWidget* InWidget)
 
 void ARoboPlayer::OnRep_CurrentHP()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnRep_CurrentHP"));
 	OnHpChanged.Broadcast(CurHp / MaxHp);
+}
+
+void ARoboPlayer::AddPlayerXP(float InAmount)
+{
+	CurXP = FMath::Clamp(CurXP + InAmount, 0.0f, MaxXP);
+	
+	if (PlayerWidgetObject)
+	{
+		if (PlayerWidgetObject->PlayerStatWidget)
+		{
+			PlayerWidgetObject->PlayerStatWidget->ProcessXPBar(CurXP / MaxXP);
+		}
+	}
+
+	//// 만약 경험치가 꽉 찼다면?
+	//if (CurXP >= MaxXP)
+	//{
+	//	LevelUp();
+	//}
 }
 
 void ARoboPlayer::ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
@@ -118,14 +148,10 @@ void ARoboPlayer::ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActo
 	{
 		return;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("ProcessBeginOverlap"));
-
 }
 
 float ARoboPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::TakeDamage"));
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	if (CurHp <= 0.0f)
@@ -263,8 +289,6 @@ void ARoboPlayer::Server_EquipWeapon_Implementation(TSubclassOf<AWeaponBase> Wea
 
 void ARoboPlayer::Input_PressE()
 {
-
-	UE_LOG(LogTemp, Warning, TEXT("Input_PressE"));
 	if (!IsLocallyControlled())
 		return;
 
@@ -284,20 +308,16 @@ void ARoboPlayer::Input_PressE()
 
 void ARoboPlayer::Server_InteractDoor_Implementation(AActor* Target)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::Server_InteractDoor_Implementation"));
 	if (auto* Interactable = Cast<AInteractableActor>(Target))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::Server_InteractDoor_Implementation_Interactable!!!!"));
 		Interactable->InteractDoor(this);
 	}
 }
 
 void ARoboPlayer::Input_PressF()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::Input_PressF()"));
 	if (FocusedActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::Input_PressF()_FocusedActor"));
 		Server_InteractDoor(FocusedActor);
 	}
 }
@@ -508,7 +528,6 @@ void ARoboPlayer::OnDeathMontageEnded()
 {
 	if (GetMesh())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::OnDeathMontageEnded()"));
 		// 날아가는 것 방지하도록 물리엔진 초기화
 		GetMesh()->SetAllBodiesBelowSimulatePhysics(NAME_None, false);
 		GetMesh()->SetPhysicsLinearVelocity(FVector::ZeroVector);

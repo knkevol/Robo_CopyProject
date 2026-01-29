@@ -65,17 +65,24 @@ public:
 
 	void SetPlayerWidget(class UPlayerWidget* InWidget);
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", ReplicatedUsing = "OnRep_CurrentHP")
+	float CurHp = 200;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", Replicated)
+	float MaxHp = 200;
+
 	UFUNCTION()
 	void OnRep_CurrentHP();
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", ReplicatedUsing = "OnRep_CurrentHP")
-	float CurHp = 50;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", Replicated)
-	float MaxHp = 50;
 
 	// 복제 통지 함수
 	UPROPERTY(BlueprintAssignable)
 	FOnChangedHP OnHpChanged;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
+	float CurXP = 0.0f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
+	float MaxXP = 100.0f;
+
+	void AddPlayerXP(float InAmount);
 	
 	// -------------Delegate
 	UFUNCTION()

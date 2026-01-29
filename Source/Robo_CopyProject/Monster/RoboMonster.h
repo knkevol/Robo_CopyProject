@@ -51,12 +51,16 @@ protected:
 	void Multi_SpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation);
 	//---------------------------------------------------
 	
-	//-------------Orb---------
+	//-------------Drop Item---------
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterDropItems")
 	TSubclassOf<class AGlowingOrbActor> OrbClass;
 
 	void SpawnGlowingOrb();
+	//------------------------------------
 
+
+	//-------------Death---------
+	void AfterDie(AActor* InTargetPlayer);
 	//------------------------------------
 
 public:	
@@ -79,6 +83,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeSpeed(float NewMaxSpeed);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
+	float XPValue = 10.0f;
 	//---------------------------------------------------
 
 

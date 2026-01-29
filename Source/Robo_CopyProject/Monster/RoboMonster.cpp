@@ -11,6 +11,7 @@
 #include "Components/ProgressBar.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../Item/GlowingOrbActor.h"
+#include "../Player/RoboPlayer.h"
 
 // Sets default values
 ARoboMonster::ARoboMonster()
@@ -90,8 +91,6 @@ void ARoboMonster::Multi_MonsterDie_Implementation()
 				AIC->SetState(EMonsterState::Death);
 			}
 		}
-
-		UE_LOG(LogTemp, Warning, TEXT("ARoboMonster::Multi_MonsterDie_Implementation()"));
 		SpawnGlowingOrb();
 	}
 
@@ -155,6 +154,14 @@ float ARoboMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	if (CurrentHP <= 0.0f)
 	{
+		if (EventInstigator)
+		{
+			AfterDie(EventInstigator->GetPawn());
+		}
+		else
+		{
+			//예외처리
+		}
 		Multi_MonsterDie();
 	}
 
@@ -210,7 +217,6 @@ void ARoboMonster::ProcessAttackHit()
 				this,
 				UDamageType::StaticClass()
 			);
-			UE_LOG(LogTemp, Log, TEXT("Monster Hit Actor: %s"), *HitActor->GetName());
 		}
 	}
 }
@@ -221,8 +227,6 @@ void ARoboMonster::SpawnGlowingOrb()
 	{
 		return;
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("ARoboMonster::SpawnGlowingOrb()"));
 
 	float OffsetX = FMath::RandRange(50.f, 100.f);
 	float OffsetY = FMath::RandRange(50.f, 100.f);
@@ -247,5 +251,14 @@ void ARoboMonster::SpawnGlowingOrb()
 		GetWorld()->SpawnActor<AGlowingOrbActor>(OrbClass, FinalSpawnLocation, FRotator::ZeroRotator, Params);
 	}
 	
+}
+
+void ARoboMonster::AfterDie(AActor* InTargetPlayer)
+{
+	ARoboPlayer* Player = Cast<ARoboPlayer>(InTargetPlayer);
+	if (Player)
+	{
+		Player->AddPlayerXP(XPValue);
+	}
 }
 
