@@ -205,4 +205,7 @@ public:
 	// ----------Player Aim
 	FRotator GetAimOffset() const;
 
+	// ----------------Player Death
+	void OnDeathMontageEnded();
+
 };

@@ -36,6 +36,12 @@ ARoboPlayer::ARoboPlayer()
 
 	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliSource"));
 
+	if (GetMesh())
+	{
+		GetMesh()->SetIsReplicated(true);
+	}
+	bReplicates = true;
+
 	SetGenericTeamId(1);
 }
 
@@ -49,6 +55,7 @@ void ARoboPlayer::BeginPlay()
 		GetMesh()->SetOwnerNoSee(false);
 		GetMesh()->SetOnlyOwnerSee(false);
 		GetMesh()->SetVisibility(true, true);
+		//GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 	}
 
 	OnActorBeginOverlap.AddDynamic(this, &ARoboPlayer::ProcessBeginOverlap);
@@ -131,7 +138,7 @@ float ARoboPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	OnRep_CurrentHP();
 	Multi_PlayerSpawnHitEffect(GetActorLocation(), GetActorRotation());
 
-	if (CurHp <= 0.0f)
+	if (HasAuthority() && CurHp <= 0.0f)
 	{
 		Multi_PlayerDie();
 	}
@@ -325,8 +332,6 @@ void ARoboPlayer::Server_StopFire_Implementation()
 
 void ARoboPlayer::Multi_PlayerDie_Implementation()
 {
-
-	UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::Multi_PlayerDie_Implementation()"));
 	if (bIsPlayerDead)
 	{
 		return;
@@ -337,7 +342,7 @@ void ARoboPlayer::Multi_PlayerDie_Implementation()
 	{
 		MoveComp->StopMovementImmediately();
 		MoveComp->DisableMovement();
-		MoveComp->SetComponentTickEnabled(false);
+		//MoveComp->SetComponentTickEnabled(false);
 	}
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -346,23 +351,9 @@ void ARoboPlayer::Multi_PlayerDie_Implementation()
 		UAnimInstance* DeathAnim = GetMesh()->GetAnimInstance();
 		if (DeathAnim)
 		{
-			DeathAnim->Montage_Play(DeathMontage);
+			float Duration = DeathAnim->Montage_Play(DeathMontage);
+			UE_LOG(LogTemp, Log, TEXT("Montage Play Duration: %f"), Duration);
 		}
-	}
-	else if (DeathMontage == nullptr) // 몽타주가 없을 때만 랙돌 실행
-	{
-		SetActorEnableCollision(false);
-		if (GetMesh())
-		{
-			GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
-			GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			GetMesh()->SetSimulatePhysics(true);
-		}
-	}
-	else
-	{
-		// 몽타주 재생 시에는 애니메이션이 우선이므로 물리 시뮬레이션 끔.
-		GetMesh()->SetSimulatePhysics(false);
 	}
 }
 
@@ -511,4 +502,22 @@ FRotator ARoboPlayer::GetAimOffset() const
 	const FRotator AimRotLS = AimDirLS.Rotation();
 
 	return AimRotLS;
+}
+
+void ARoboPlayer::OnDeathMontageEnded()
+{
+	if (GetMesh())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::OnDeathMontageEnded()"));
+		// 날아가는 것 방지하도록 물리엔진 초기화
+		GetMesh()->SetAllBodiesBelowSimulatePhysics(NAME_None, false);
+		GetMesh()->SetPhysicsLinearVelocity(FVector::ZeroVector);
+		GetMesh()->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
+
+
+		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+		GetMesh()->SetSimulatePhysics(true);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetMesh()->SetAnimationMode(EAnimationMode::AnimationCustomMode);
+	}
 }
