@@ -121,11 +121,6 @@ void ARoboPlayer::SetPlayerWidget(UPlayerWidget* InWidget)
 	PlayerWidgetObject = InWidget;
 }
 
-void ARoboPlayer::SetLevelUpWidget(ULevelUpWidget* InWidget)
-{
-	LevelUpWidgetObject = InWidget;
-}
-
 void ARoboPlayer::OnRep_CurrentHP()
 {
 	OnHpChanged.Broadcast(CurHp / MaxHp);
@@ -135,7 +130,7 @@ void ARoboPlayer::AddPlayerXP(float InAmount)
 {
 	CurXP += InAmount;
 
-	if (CurXP >= MaxXP)
+	if (CurXP >= MaxXP) //LevelUp
 	{
 		CurXP = 0.0f;
 		ARoboPlayerState* PS = GetPlayerState<ARoboPlayerState>();
@@ -144,10 +139,15 @@ void ARoboPlayer::AddPlayerXP(float InAmount)
 			PS->LevelUp();
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("LevelUpWidgetObject : %s"), LevelUpWidgetObject ? *LevelUpWidgetObject->GetName() : TEXT("None"));
+		if (LevelUpWidgetClass)
+		{
+			LevelUpWidgetObject = CreateWidget<ULevelUpWidget>(GetWorld(), LevelUpWidgetClass);
+			UE_LOG(LogTemp, Warning, TEXT("LevelUpWidgetObject : %s"), LevelUpWidgetObject ? *LevelUpWidgetObject->GetName() : TEXT("None"));	
+		}
+
 		if (LevelUpWidgetObject)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::AddPlayerXP_LevelUpWidgetObject"));
+			UE_LOG(LogTemp, Warning, TEXT("LevelUpWidgetObject2 : %s"), LevelUpWidgetObject ? *LevelUpWidgetObject->GetName() : TEXT("None"));
 			LevelUpWidgetObject->InitLevelUpScreen(); // 초기 상태 설정
 			if (!LevelUpWidgetObject->IsInViewport())
 			{

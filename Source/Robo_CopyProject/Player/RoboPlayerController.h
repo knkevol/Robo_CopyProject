@@ -27,11 +27,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
 	TObjectPtr<class UPlayerWidget> PlayerWidgetObject;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
-	TSubclassOf<class ULevelUpWidget> LevelUpWidgetClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
-	TObjectPtr<class ULevelUpWidget> LevelUpWidgetObject;
-
 	
 };

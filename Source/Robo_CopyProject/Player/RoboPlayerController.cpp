@@ -3,7 +3,6 @@
 
 #include "RoboPlayerController.h"
 #include "../Widget/PlayerWidget.h"
-#include "../Widget/LevelUpWidget.h"
 #include "RoboPlayer.h"
 
 void ARoboPlayerController::BeginPlay()
@@ -17,11 +16,6 @@ void ARoboPlayerController::BeginPlay()
 			PlayerWidgetObject = CreateWidget<UPlayerWidget>(this, PlayerWidgetClass);
 			PlayerWidgetObject->AddToViewport();
 		}
-
-		if (LevelUpWidgetClass)
-		{
-			LevelUpWidgetObject = CreateWidget<ULevelUpWidget>(this, LevelUpWidgetClass);
-		}
 	}
 
 
@@ -30,7 +24,6 @@ void ARoboPlayerController::BeginPlay()
 		if (ARoboPlayer* RoboPlayer = Cast<ARoboPlayer>(RoboPawn))
 		{
 			RoboPlayer->SetPlayerWidget(PlayerWidgetObject);
-			RoboPlayer->SetLevelUpWidget(LevelUpWidgetObject);
 		}
 	}
 }
@@ -42,7 +35,6 @@ void ARoboPlayerController::OnPossess(APawn* aPawn)
 	if (ARoboPlayer* RoboPlayer = Cast<ARoboPlayer>(aPawn))
 	{
 		RoboPlayer->SetPlayerWidget(PlayerWidgetObject);
-		RoboPlayer->SetLevelUpWidget(LevelUpWidgetObject);
 	}
 }
 

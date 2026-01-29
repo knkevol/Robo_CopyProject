@@ -88,7 +88,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
 	TObjectPtr<class ULevelUpWidget> LevelUpWidgetObject;
 
-	void SetLevelUpWidget(class ULevelUpWidget* InWidget);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
+	TSubclassOf<class ULevelUpWidget> LevelUpWidgetClass;
 	//------------------------------------------------------------------
 	
 	// -------------Delegate
