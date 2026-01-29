@@ -3,6 +3,7 @@
 
 #include "RoboPlayer.h"
 #include "RoboPlayerController.h"
+#include "RoboPlayerState.h"
 
 #include "GameframeWork/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -124,8 +125,19 @@ void ARoboPlayer::OnRep_CurrentHP()
 
 void ARoboPlayer::AddPlayerXP(float InAmount)
 {
-	CurXP = FMath::Clamp(CurXP + InAmount, 0.0f, MaxXP);
+	CurXP += InAmount;
+
 	
+	if (CurXP >= MaxXP)
+	{
+		CurXP = 0.0f;
+		ARoboPlayerState* PS = GetPlayerState<ARoboPlayerState>();
+		if (PS)
+		{
+			PS->LevelUp();
+		}
+	}
+
 	if (PlayerWidgetObject)
 	{
 		if (PlayerWidgetObject->PlayerStatWidget)
@@ -133,12 +145,6 @@ void ARoboPlayer::AddPlayerXP(float InAmount)
 			PlayerWidgetObject->PlayerStatWidget->ProcessXPBar(CurXP / MaxXP);
 		}
 	}
-
-	//// 만약 경험치가 꽉 찼다면?
-	//if (CurXP >= MaxXP)
-	//{
-	//	LevelUp();
-	//}
 }
 
 void ARoboPlayer::ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)

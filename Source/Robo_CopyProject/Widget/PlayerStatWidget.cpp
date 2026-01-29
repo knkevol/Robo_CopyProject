@@ -7,6 +7,7 @@
 #include "Components/Image.h"
 #include "../Player/RoboPlayer.h"
 #include "../Player/RoboPlayerController.h"
+#include "../Player/RoboPlayerState.h"
 
 void UPlayerStatWidget::NativeOnInitialized()
 {
@@ -49,7 +50,15 @@ void UPlayerStatWidget::ProcessXPBar(float InPercent)
 
 	if (PlayerLevelText)
 	{
-
+		APlayerController* PC = GetOwningPlayer();
+		if (PC)
+		{
+			ARoboPlayerState* PS = PC->GetPlayerState<ARoboPlayerState>();
+			if (PS)
+			{
+				PlayerLevelText->SetText(FText::FromString(FString::Printf(TEXT("%d"), PS->PlayerLevel)));
+			}
+		}
 	}
 
 }
