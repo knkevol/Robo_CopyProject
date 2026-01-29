@@ -13,6 +13,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedHP, const float, Percent);
 class UInputAction;
 class AWeaponBase;
 class UAIPerceptionStimuliSourceComponent;
+class USceneCaptureComponent2D;
+class UTextureRenderTarget2D;
+class UMaterialInterface;
+class UMaterialInstanceDynamic;
 
 UENUM(BlueprintType)
 enum class EWeaponState : uint8
@@ -37,6 +41,24 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	//----------------Minimap--------------
+	/** 1. 씬 캡처 컴포넌트 (하늘에서 바닥을 찍는 카메라) */
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RoboMinimap", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USceneCaptureComponent2D> MinimapCaptureComponent;
+
+	/** 2. 미니맵 기본 머티리얼 (에디터에서 RT를 사용하는 UI 머티리얼을 할당) */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboMinimap")
+	TObjectPtr<UMaterialInterface> MinimapBaseMaterial;
+
+	/** 3. 런타임에 생성될 동적 머티리얼 인스턴스 */
+	UPROPERTY()
+	TObjectPtr<UMaterialInstanceDynamic> MinimapDynamicMaterial;
+
+	/** 4. 플레이어별 고유 렌더 타겟 */
+	UPROPERTY()
+	TObjectPtr<UTextureRenderTarget2D> MinimapRenderTarget;
+	//------------------------------------------
 
 public:	
 	// Called every frame

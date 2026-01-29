@@ -7,6 +7,9 @@
 
 #include "GameframeWork/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -44,6 +47,14 @@ ARoboPlayer::ARoboPlayer()
 
 	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliSource"));
 
+	//Minimap
+	MinimapCaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("MinimapCaptureComponent"));
+	MinimapCaptureComponent->SetupAttachment(RootComponent);
+	MinimapCaptureComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 1000.0f));
+	MinimapCaptureComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+	MinimapCaptureComponent->ProjectionType = ECameraProjectionMode::Orthographic; //원근감 제거
+	MinimapCaptureComponent->OrthoWidth = 2000.0f; //실제월드범위
+
 	if (GetMesh())
 	{
 		GetMesh()->SetIsReplicated(true);
@@ -63,17 +74,39 @@ void ARoboPlayer::BeginPlay()
 		GetMesh()->SetOwnerNoSee(false);
 		GetMesh()->SetOnlyOwnerSee(false);
 		GetMesh()->SetVisibility(true, true);
-		//GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 	}
 
-	//XP Widget 초기값 업데이트
+	//Minimap Init
+	if (IsLocallyControlled())
+	{
+		// 1. 각 플레이어만의 고유한 렌더 타겟 생성
+		MinimapRenderTarget = NewObject<UTextureRenderTarget2D>(this);
+		MinimapRenderTarget->InitAutoFormat(512, 512);
+
+		// 2. 씬 캡처 컴포넌트에 할당
+		MinimapCaptureComponent->TextureTarget = MinimapRenderTarget;
+
+		if (MinimapBaseMaterial)
+		{
+			MinimapDynamicMaterial = UMaterialInstanceDynamic::Create(MinimapBaseMaterial, this);
+			MinimapDynamicMaterial->SetTextureParameterValue(FName("MinimapTex"), MinimapRenderTarget);
+		}
+	}
+
+	//XP Widget Init
 	if (PlayerWidgetObject && PlayerWidgetObject->PlayerStatWidget)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ARoboPlayer::BeginPlay()_PlayerWidgetObject"));
 		PlayerWidgetObject->PlayerStatWidget->ProcessXPBar(CurXP / MaxXP);
 	}
 
-	//Delegate
+	////Minimap
+	//if (PlayerWidgetObject && PlayerWidgetObject->MinimapImage)
+	//{
+	//	// C++에서 생성한 '실시간 변환기(Dynamic Material)'를 위젯 이미지에 할당
+	//	PlayerWidgetObject->MinimapImage->SetBrushFromMaterial(MinimapDynamicMaterial);
+	//}
+
+	//Delegate Binding
 	OnActorBeginOverlap.AddDynamic(this, &ARoboPlayer::ProcessBeginOverlap);
 	UCapsuleComponent* Capsule = GetCapsuleComponent();
 	Capsule->OnComponentBeginOverlap.AddDynamic(this,&ARoboPlayer::OnBeginOverlap);
