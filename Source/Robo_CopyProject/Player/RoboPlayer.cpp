@@ -131,7 +131,7 @@ void ARoboPlayer::Tick(float DeltaTime)
 		FVector NewLocation = GetActorLocation();
 		NewLocation.Z += 1500.0f; // 카메라 높이값
 		MinimapCapture->SetWorldLocation(NewLocation);
-		MinimapCapture->SetWorldRotation(FRotator(-90.0f, 0.0f, 0.0f));
+		MinimapCapture->SetWorldRotation(FRotator(-90.0f, 0.0f, -90.0f));
 	}
 
 }

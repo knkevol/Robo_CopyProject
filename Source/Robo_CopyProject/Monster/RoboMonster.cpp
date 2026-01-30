@@ -13,11 +13,13 @@
 #include "../Item/GlowingOrbActor.h"
 #include "../Player/RoboPlayer.h"
 
+#include "DrawDebugHelpers.h"
+
 // Sets default values
 ARoboMonster::ARoboMonster()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	MonsterHPWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("MonsterHPWidget"));
 	MonsterHPWidget->SetupAttachment(GetMesh());
