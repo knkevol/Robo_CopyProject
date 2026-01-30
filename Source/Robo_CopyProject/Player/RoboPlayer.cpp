@@ -28,6 +28,7 @@
 #include "../Widget/PlayerWidget.h"
 #include "../Widget/PlayerStatWidget.h"
 #include "../Widget/LevelUpWidget.h"
+#include "../Widget/MinimapWidget.h"
 
 
 // Sets default values
@@ -48,12 +49,12 @@ ARoboPlayer::ARoboPlayer()
 	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliSource"));
 
 	//Minimap
-	MinimapCaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("MinimapCaptureComponent"));
-	MinimapCaptureComponent->SetupAttachment(RootComponent);
-	MinimapCaptureComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 1000.0f));
-	MinimapCaptureComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
-	MinimapCaptureComponent->ProjectionType = ECameraProjectionMode::Orthographic; //원근감 제거
-	MinimapCaptureComponent->OrthoWidth = 2000.0f; //실제월드범위
+	MinimapCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("MinimapCaptureComponent"));
+	MinimapCapture->SetupAttachment(RootComponent);
+	MinimapCapture->SetRelativeLocation(FVector(0.0f, 0.0f, 1500.0f));
+	MinimapCapture->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+	MinimapCapture->ProjectionType = ECameraProjectionMode::Orthographic; //원근감 제거
+	MinimapCapture->OrthoWidth = 2000.0f; //실제월드범위
 
 	if (GetMesh())
 	{
@@ -80,17 +81,30 @@ void ARoboPlayer::BeginPlay()
 	if (IsLocallyControlled())
 	{
 		// 1. 각 플레이어만의 고유한 렌더 타겟 생성
-		MinimapRenderTarget = NewObject<UTextureRenderTarget2D>(this);
-		MinimapRenderTarget->InitAutoFormat(512, 512);
-
-		// 2. 씬 캡처 컴포넌트에 할당
-		MinimapCaptureComponent->TextureTarget = MinimapRenderTarget;
+		MinimapRT = NewObject<UTextureRenderTarget2D>(this);
+		MinimapRT->InitAutoFormat(512, 512);
+		MinimapRT->ClearColor = FLinearColor::Black;
+		UE_LOG(LogTemp, Warning, TEXT("TextureTarget : %s"), *MinimapCapture->TextureTarget->GetName());
+		MinimapCapture->TextureTarget = MinimapRT;
 
 		if (MinimapBaseMaterial)
 		{
 			MinimapDynamicMaterial = UMaterialInstanceDynamic::Create(MinimapBaseMaterial, this);
-			MinimapDynamicMaterial->SetTextureParameterValue(FName("MinimapTex"), MinimapRenderTarget);
+			MinimapDynamicMaterial->SetTextureParameterValue(FName("MinimapTex"), MinimapRT);
+
+			UTexture* OutTex;
+			MinimapDynamicMaterial->GetTextureParameterValue(FName("MinimapTex"), OutTex);
+			UE_LOG(LogTemp, Warning, TEXT("Material Parameter Set: %s"), OutTex ? *OutTex->GetName() : TEXT("Failed"));
 		}
+
+		GetWorldTimerManager().SetTimerForNextTick([this]()
+			{
+				if (PlayerWidgetObject && PlayerWidgetObject->PMinimapWidget && MinimapDynamicMaterial)
+				{
+					PlayerWidgetObject->PMinimapWidget->SetMinimapImage(MinimapDynamicMaterial);
+					UE_LOG(LogTemp, Warning, TEXT("Minimap: Successfully linked on next tick!"));
+				}
+			});
 	}
 
 	//XP Widget Init
@@ -98,13 +112,6 @@ void ARoboPlayer::BeginPlay()
 	{
 		PlayerWidgetObject->PlayerStatWidget->ProcessXPBar(CurXP / MaxXP);
 	}
-
-	////Minimap
-	//if (PlayerWidgetObject && PlayerWidgetObject->MinimapImage)
-	//{
-	//	// C++에서 생성한 '실시간 변환기(Dynamic Material)'를 위젯 이미지에 할당
-	//	PlayerWidgetObject->MinimapImage->SetBrushFromMaterial(MinimapDynamicMaterial);
-	//}
 
 	//Delegate Binding
 	OnActorBeginOverlap.AddDynamic(this, &ARoboPlayer::ProcessBeginOverlap);
@@ -128,7 +135,6 @@ void ARoboPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	UEnhancedInputComponent* UIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (UIC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UIC"));
 		UIC->BindAction(IA_Equip, ETriggerEvent::Started, this, &ARoboPlayer::Input_PressE);
 		UIC->BindAction(IA_DoorOpen, ETriggerEvent::Started, this, &ARoboPlayer::Input_PressF);
 		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ARoboPlayer::Server_Reload);

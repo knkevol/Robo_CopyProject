@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "MinimapWidget.generated.h"
 
+class UMaterialInstanceDynamic;
+
 /**
  * 
  */
@@ -14,4 +16,12 @@ class ROBO_COPYPROJECT_API UMinimapWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget", meta = (WidgetBind))
+	TObjectPtr<class UImage> MinimapImage;
+
+	virtual void NativeOnInitialized() override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetMinimapImage(UMaterialInstanceDynamic* InMI);
 };

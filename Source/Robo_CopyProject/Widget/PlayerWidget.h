@@ -27,6 +27,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget", meta = (WidgetBind))
 	TObjectPtr<class UPlayerTopWidget> PlayerTopWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget", meta = (WidgetBind))
+	TObjectPtr<class UMinimapWidget> PMinimapWidget;
+
 
 	void UpdateBullet(int32 Cur, int32 Max);
 	

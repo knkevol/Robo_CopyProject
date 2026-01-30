@@ -43,21 +43,21 @@ protected:
 	virtual void BeginPlay() override;
 
 	//----------------Minimap--------------
-	/** 1. 씬 캡처 컴포넌트 (하늘에서 바닥을 찍는 카메라) */
+	/* (하늘에서 바닥을 찍는 카메라) */
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RoboMinimap", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USceneCaptureComponent2D> MinimapCaptureComponent;
+	TObjectPtr<USceneCaptureComponent2D> MinimapCapture;
 
 	/** 2. 미니맵 기본 머티리얼 (에디터에서 RT를 사용하는 UI 머티리얼을 할당) */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboMinimap")
 	TObjectPtr<UMaterialInterface> MinimapBaseMaterial;
 
-	/** 3. 런타임에 생성될 동적 머티리얼 인스턴스 */
+	/* 카메라 영상을 TV가 이해할 수 있는 신호로 바꾸는 변환기 */
 	UPROPERTY()
 	TObjectPtr<UMaterialInstanceDynamic> MinimapDynamicMaterial;
 
-	/** 4. 플레이어별 고유 렌더 타겟 */
+	/* 카메라와 TV를 연결하는 비디오 선 */
 	UPROPERTY()
-	TObjectPtr<UTextureRenderTarget2D> MinimapRenderTarget;
+	TObjectPtr<UTextureRenderTarget2D> MinimapRT;
 	//------------------------------------------
 
 public:	
