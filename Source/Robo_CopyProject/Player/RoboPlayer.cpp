@@ -50,11 +50,8 @@ ARoboPlayer::ARoboPlayer()
 
 	//Minimap
 	MinimapCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("MinimapCaptureComponent"));
-	MinimapCapture->SetupAttachment(RootComponent);
-	MinimapCapture->SetRelativeLocation(FVector(0.0f, 0.0f, 1500.0f));
-	MinimapCapture->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
-	MinimapCapture->ProjectionType = ECameraProjectionMode::Orthographic; //원근감 제거
-	MinimapCapture->OrthoWidth = 2000.0f; //실제월드범위
+	MinimapCapture->ProjectionType = ECameraProjectionMode::Orthographic;
+	MinimapCapture->OrthoWidth = 1500.0f;
 
 	if (GetMesh())
 	{
@@ -91,12 +88,9 @@ void ARoboPlayer::BeginPlay()
 		{
 			MinimapDynamicMaterial = UMaterialInstanceDynamic::Create(MinimapBaseMaterial, this);
 			MinimapDynamicMaterial->SetTextureParameterValue(FName("MinimapTex"), MinimapRT);
-
-			UTexture* OutTex;
-			MinimapDynamicMaterial->GetTextureParameterValue(FName("MinimapTex"), OutTex);
-			UE_LOG(LogTemp, Warning, TEXT("Material Parameter Set: %s"), OutTex ? *OutTex->GetName() : TEXT("Failed"));
 		}
 
+		//Delay
 		GetWorldTimerManager().SetTimerForNextTick([this]()
 			{
 				if (PlayerWidgetObject && PlayerWidgetObject->PMinimapWidget && MinimapDynamicMaterial)
@@ -125,6 +119,15 @@ void ARoboPlayer::BeginPlay()
 void ARoboPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//미니맵 카메라 회전 고정 및 위치 업데이트
+	if (MinimapCapture)
+	{
+		FVector NewLocation = GetActorLocation();
+		NewLocation.Z += 1500.0f; // 카메라 높이값
+		MinimapCapture->SetWorldLocation(NewLocation);
+		MinimapCapture->SetWorldRotation(FRotator(-90.0f, 0.0f, 0.0f));
+	}
 
 }
 
