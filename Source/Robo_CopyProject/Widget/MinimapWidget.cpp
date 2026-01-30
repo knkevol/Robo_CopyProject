@@ -12,7 +12,7 @@ void UMinimapWidget::NativeOnInitialized()
 
 void UMinimapWidget::SetMinimapImage(UMaterialInstanceDynamic* InMI)
 {
-    if (!MinimapImage)
+    if (!PMinimapImage)
     {
         UE_LOG(LogTemp, Error, TEXT("MinimapWidget: MinimapImage(Image Widget) is NULL!"));
         return;
@@ -26,5 +26,5 @@ void UMinimapWidget::SetMinimapImage(UMaterialInstanceDynamic* InMI)
 
     // 함수가 정상 호출됨을 알림
     UE_LOG(LogTemp, Warning, TEXT("MinimapWidget: Setting Material %s to Image Widget"), *InMI->GetName());
-    MinimapImage->SetBrushFromMaterial(InMI);
+    PMinimapImage->SetBrushFromMaterial(InMI);
 }

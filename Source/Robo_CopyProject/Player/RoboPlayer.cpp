@@ -51,7 +51,7 @@ ARoboPlayer::ARoboPlayer()
 	//Minimap
 	MinimapCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("MinimapCaptureComponent"));
 	MinimapCapture->ProjectionType = ECameraProjectionMode::Orthographic;
-	MinimapCapture->OrthoWidth = 1500.0f;
+	MinimapCapture->OrthoWidth = 2000.0f;
 
 	if (GetMesh())
 	{
@@ -77,7 +77,6 @@ void ARoboPlayer::BeginPlay()
 	//Minimap Init
 	if (IsLocallyControlled())
 	{
-		// 1. 각 플레이어만의 고유한 렌더 타겟 생성
 		MinimapRT = NewObject<UTextureRenderTarget2D>(this);
 		MinimapRT->InitAutoFormat(512, 512);
 		MinimapRT->ClearColor = FLinearColor::Black;
@@ -99,6 +98,12 @@ void ARoboPlayer::BeginPlay()
 					UE_LOG(LogTemp, Warning, TEXT("Minimap: Successfully linked on next tick!"));
 				}
 			});
+
+		//미니맵에서 플레이어 숨기기
+		if (MinimapCapture)
+		{
+			MinimapCapture->HideActorComponents(this);
+		}
 	}
 
 	//XP Widget Init

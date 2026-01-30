@@ -18,7 +18,7 @@ class ROBO_COPYPROJECT_API UMinimapWidget : public UUserWidget
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget", meta = (WidgetBind))
-	TObjectPtr<class UImage> MinimapImage;
+	TObjectPtr<class UImage> PMinimapImage;
 
 	virtual void NativeOnInitialized() override;
 
