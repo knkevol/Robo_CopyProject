@@ -1,15 +1,17 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RoboGameModeBase.h"
+#include "CmGameModeBase.h"
 #include "../Widget/StageNameWidget.h"
 
-ARoboGameModeBase::ARoboGameModeBase()
+ACmGameModeBase::ACmGameModeBase()
 {
 }
 
-void ARoboGameModeBase::BeginPlay()
+void ACmGameModeBase::BeginPlay()
 {
+	Super::BeginPlay();
+
 	Super::BeginPlay();
 
 	if (StageNameWidgetClass)
@@ -19,7 +21,7 @@ void ARoboGameModeBase::BeginPlay()
 		{
 			StageNameWidgetObject->AddToViewport();
 
-			FString LevelName = TEXT("Crypt");
+			FString LevelName = TEXT("Cemetery");
 			StageNameWidgetObject->StageNameTyping(LevelName, 0.3f);
 		}
 	}

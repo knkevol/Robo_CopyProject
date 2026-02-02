@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "RoboGameModeBase.generated.h"
+#include "CmGameModeBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ROBO_COPYPROJECT_API ARoboGameModeBase : public AGameModeBase
+class ROBO_COPYPROJECT_API ACmGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
 public:
-	ARoboGameModeBase();
+	ACmGameModeBase();
 
 protected:
 	virtual void BeginPlay() override;
@@ -25,4 +25,5 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget")
 	TObjectPtr<class UStageNameWidget> StageNameWidgetObject;
+	
 };
