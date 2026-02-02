@@ -13,6 +13,7 @@ UBTTask_CheckDistance::UBTTask_CheckDistance()
 EBTNodeResult::Type UBTTask_CheckDistance::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AActor* Player = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(TEXT("Target")));
+	UE_LOG(LogTemp, Warning, TEXT(" UBTTask_CheckDistance::ExecuteTask_Player : %s"), *Player->GetName());
 	ARoboMonster* RMonster = Cast<ARoboMonster>(OwnerComp.GetAIOwner()->GetPawn());
 
 	if (Player && RMonster)

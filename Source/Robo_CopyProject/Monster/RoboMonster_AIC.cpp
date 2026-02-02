@@ -3,13 +3,15 @@
 
 #include "RoboMonster_AIC.h"
 #include "RoboMonster.h"
+#include "../Player/RoboPlayer.h"
+
+#include "BrainComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
-#include "../Player/RoboPlayer.h"
-#include "BrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 
+#include "Kismet/GameplayStatics.h"
 
 ARoboMonster_AIC::ARoboMonster_AIC()
 {
@@ -33,11 +35,15 @@ void ARoboMonster_AIC::OnPossess(APawn* InPawn)
 	ARoboMonster* Monster = Cast<ARoboMonster>(InPawn);
 	if (Monster && Monster->BTAsset)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ARoboMonster_AIC::OnPossess_MonsterO"));
 		UBlackboardComponent* BlackboardComp = Blackboard.Get();
 		if (UseBlackboard(Monster->BTAsset->BlackboardAsset, BlackboardComp))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ARoboMonster_AIC::OnPossess_Blackboard : %s"), *BlackboardComp->GetBlackboardAsset()->GetName());
+			APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+			if (PlayerPawn)
+			{
+				// 블랙보드에 "Target"이라는 이름의 키가 있다면 할당
+				Blackboard->SetValueAsObject(TEXT("Target"), PlayerPawn);
+			}
 			RunBehaviorTree(Monster->BTAsset);
 		}
 		
