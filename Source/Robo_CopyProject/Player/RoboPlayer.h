@@ -102,15 +102,15 @@ public:
 	void AddPlayerXP(float InAmount);
 
 	//-----------------------Widget----------------------
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget")
 	TObjectPtr<class UPlayerWidget> PlayerWidgetObject;
 
 	void SetPlayerWidget(class UPlayerWidget* InWidget);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget")
 	TObjectPtr<class ULevelUpWidget> LevelUpWidgetObject;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget")
 	TSubclassOf<class ULevelUpWidget> LevelUpWidgetClass;
 	//------------------------------------------------------------------
 	

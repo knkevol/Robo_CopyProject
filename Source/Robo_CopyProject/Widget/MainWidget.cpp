@@ -3,11 +3,43 @@
 
 #include "MainWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/Button.h"
 
-void UMainWidget::OnStartButtonClicked()
+void UMainWidget::NativeConstruct()
 {
-	const UWorld* World = GetWorld();
-	check(World);
-	UGameplayStatics::OpenLevel(World, TEXT("Stage"));
-	
+	Super::NativeConstruct();
+
+	if (StartButton)
+	{
+		StartButton->OnClicked.AddDynamic(this, &UMainWidget::HandleStartButton);
+	}
+
+	if (SettingButton)
+	{
+		SettingButton->OnClicked.AddDynamic(this, &UMainWidget::HandleSettingButton);
+	}
+
+	if (ExitButton)
+	{
+		ExitButton->OnClicked.AddDynamic(this, &UMainWidget::HandleExitButton);
+	}
+
+}
+
+void UMainWidget::HandleStartButton()
+{
+	UE_LOG(LogTemp, Log, TEXT("Widget: Start Button Clicked -> Broadcasting OnStartClicked"));
+	OnStartClicked.Broadcast();
+}
+
+void UMainWidget::HandleSettingButton()
+{
+	UE_LOG(LogTemp, Log, TEXT("Widget: Setting Button Clicked -> Broadcasting OnSettingClicked"));
+	OnSettingClicked.Broadcast();
+}
+
+void UMainWidget::HandleExitButton()
+{
+	UE_LOG(LogTemp, Log, TEXT("Widget: Exit Button Clicked -> Broadcasting OnExitClicked"));
+	OnExitClicked.Broadcast();
 }
