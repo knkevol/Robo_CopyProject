@@ -9,6 +9,22 @@ void ULevelUpWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 }
 
+void ULevelUpWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (Benefit01)
+	{
+		Benefit01->OnBenefitClicked.AddDynamic(this, &ULevelUpWidget::HandleBenefitClicked);
+	}
+
+	if (Benefit02)
+	{
+		Benefit02->OnBenefitClicked.AddDynamic(this, &ULevelUpWidget::HandleBenefitClicked);
+	}
+
+}
+
 void ULevelUpWidget::InitLevelUpScreen()
 {
 	bIsStatScreenValue = false;
@@ -46,5 +62,17 @@ void ULevelUpWidget::ToggleScreen()
 	{
 		LevelUpScreen->SetVisibility(ESlateVisibility::Visible);
 		LevelUpStatScreen->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
+void ULevelUpWidget::HandleBenefitClicked()
+{
+	RemoveFromParent();
+
+	APlayerController* PC = GetOwningPlayer();
+	if (PC)
+	{
+		PC->SetShowMouseCursor(false);
+		PC->SetInputMode(FInputModeGameOnly());
 	}
 }

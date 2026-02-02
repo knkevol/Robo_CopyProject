@@ -10,7 +10,7 @@ public class Robo_CopyProject : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", 
 			"EnhancedInput", "AnimGraphRuntime", "NavigationSystem", "AIModule", "UMG",
-			"AnimGraphRuntime"});
+			"AnimGraphRuntime", "Slate", "SlateCore"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "Niagara" });
 

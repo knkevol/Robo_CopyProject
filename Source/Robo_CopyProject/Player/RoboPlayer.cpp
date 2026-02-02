@@ -80,7 +80,7 @@ void ARoboPlayer::BeginPlay()
 		MinimapRT = NewObject<UTextureRenderTarget2D>(this);
 		MinimapRT->InitAutoFormat(512, 512);
 		MinimapRT->ClearColor = FLinearColor::Black;
-		UE_LOG(LogTemp, Warning, TEXT("TextureTarget : %s"), *MinimapCapture->TextureTarget->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("TextureTarget : %s"), *MinimapCapture->TextureTarget->GetName());
 		MinimapCapture->TextureTarget = MinimapRT;
 
 		if (MinimapBaseMaterial)
@@ -462,8 +462,6 @@ void ARoboPlayer::Multi_PlayerSpawnHitEffect_Implementation(FVector_NetQuantize 
 
 void ARoboPlayer::Input_LevelUpBenefit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Input_LevelUpBenefit : %s"), LevelUpWidgetObject ? *LevelUpWidgetObject->GetName() : TEXT("None"));
-	UE_LOG(LogTemp, Warning, TEXT("Input_LevelUpBenefit : %d"), LevelUpWidgetObject->IsInViewport());
 	if (LevelUpWidgetObject && LevelUpWidgetObject->IsInViewport())
 	{
 		LevelUpWidgetObject->ToggleScreen();
