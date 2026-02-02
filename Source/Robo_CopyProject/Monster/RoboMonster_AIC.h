@@ -27,7 +27,7 @@ public:
 
 	virtual void OnUnPossess() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "RoboData")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RoboData")
 	TObjectPtr<UAIPerceptionComponent> Perception;
 
 	UFUNCTION()
@@ -42,7 +42,7 @@ public:
 	UFUNCTION()
 	void ProcessActorPerceptionInfo(const FActorPerceptionUpdateInfo& UpdateInfo);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboData")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	TObjectPtr<UBehaviorTree> RunBTAsset;
 
 	void SetState(EMonsterState NewState);

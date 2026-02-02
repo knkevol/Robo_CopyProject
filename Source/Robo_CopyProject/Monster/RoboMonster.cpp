@@ -5,13 +5,14 @@
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
-#include "DrawDebugHelpers.h"
 #include "RoboMonster_AIC.h"
 #include "Net/UnrealNetwork.h" //Replicated
 #include "Components/ProgressBar.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../Item/GlowingOrbActor.h"
 #include "../Player/RoboPlayer.h"
+#include "BehaviorTree/BehaviorTree.h"
 
 #include "DrawDebugHelpers.h"
 
@@ -21,11 +22,16 @@ ARoboMonster::ARoboMonster()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MonsterCapsule"));
+	GetMesh()->SetCollisionProfileName(TEXT("MonsterMesh"));
+
 	MonsterHPWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("MonsterHPWidget"));
 	MonsterHPWidget->SetupAttachment(GetMesh());
 	MonsterHPWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
 	MonsterHPWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	MonsterHPWidget->SetIsReplicated(true);
+
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 }
 

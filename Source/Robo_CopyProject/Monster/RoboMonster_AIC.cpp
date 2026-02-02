@@ -8,6 +8,7 @@
 #include "../Player/RoboPlayer.h"
 #include "BrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 
 
 ARoboMonster_AIC::ARoboMonster_AIC()
@@ -29,10 +30,17 @@ void ARoboMonster_AIC::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	if (RunBTAsset)
+	ARoboMonster* Monster = Cast<ARoboMonster>(InPawn);
+	if (Monster && Monster->BTAsset)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ARoboMonster_AIC::OnPossess"));
-		RunBehaviorTree(RunBTAsset);
+		UE_LOG(LogTemp, Warning, TEXT("ARoboMonster_AIC::OnPossess_MonsterO"));
+		UBlackboardComponent* BlackboardComp = Blackboard.Get();
+		if (UseBlackboard(Monster->BTAsset->BlackboardAsset, BlackboardComp))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ARoboMonster_AIC::OnPossess_Blackboard : %s"), *BlackboardComp->GetBlackboardAsset()->GetName());
+			RunBehaviorTree(Monster->BTAsset);
+		}
+		
 	}
 
 	//Perception->OnPerceptionUpdated.AddDynamic(this, &AZombie_AIC::ProcessPerception);

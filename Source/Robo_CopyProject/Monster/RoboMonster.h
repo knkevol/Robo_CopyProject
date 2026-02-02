@@ -86,6 +86,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
 	float XPValue = 100.0f; //temp
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
+	TObjectPtr<class UBehaviorTree> BTAsset;
 	//---------------------------------------------------
 
 
