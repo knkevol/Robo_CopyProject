@@ -53,6 +53,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
 	int32 CurBullet = 10;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
+	float WeaponDamage = 0.0f;
+
 	ARoboPlayer* GetOwningPlayer() const;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "RoboWeaponData")

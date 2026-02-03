@@ -39,6 +39,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	float Damage = 10.f;
 
+	void SetProjectileDamage(float NewDamage) { Damage = NewDamage; }
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	TSubclassOf<UDamageType> HitDamage;
 

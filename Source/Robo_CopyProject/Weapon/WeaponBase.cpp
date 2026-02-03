@@ -113,13 +113,16 @@ void AWeaponBase::StopFire()
 void AWeaponBase::FireProjectile(FTransform SpawnTransform, FHitResult InHitResult)
 {
 	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileTemplate, SpawnTransform);
+	if (Projectile)
+	{
+		Projectile->SetProjectileDamage(this->WeaponDamage);
+	}
 	Projectile->HitResult = InHitResult;
 	Projectile->SetOwner(this);
 }
 
 bool AWeaponBase::CalculateShootData(FVector& OutSpawnLocation, FVector& OutTargetLocation, FRotator& OutAimRotation)
 {
-
 	ARoboPlayer* RoboPlayer = Cast<ARoboPlayer>(GetOwner());
 
 	if (!RoboPlayer)
