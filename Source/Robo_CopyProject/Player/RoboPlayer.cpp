@@ -243,63 +243,6 @@ float ARoboPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	return 0.0f;
 }
 
-void ARoboPlayer::EquipItem(APickUpItemBase* PickedItem)
-{
-	if (!PickedItem)
-		return;
-
-	// 서버에서만 Multicast 호출
-	if (HasAuthority())
-	{
-		Multi_EquipItem(PickedItem);
-	}
-}
-
-void ARoboPlayer::Multi_EquipItem_Implementation(APickUpItemBase* PickedItem)
-{
-	Weapon->SetChildActorClass(PickedItem->ItemTemplate);
-	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
-	if (!ChildWeapon)
-	{
-		return;
-	}
-
-	if (ChildWeapon)
-	{
-		if (ChildWeapon->Name.Compare(TEXT("Pistol")) == 0)
-		{
-			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
-			WeaponState = EWeaponState::Pistol;
-			ChildWeapon->SetOwner(this);
-		}
-		else if (ChildWeapon->Name.Compare(TEXT("Rifle")) == 0)
-		{
-			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
-			WeaponState = EWeaponState::Rifle;
-			ChildWeapon->SetOwner(this);
-		}
-		else if (ChildWeapon->Name.Compare(TEXT("ScifiKnife")) == 0)
-		{
-			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
-			WeaponState = EWeaponState::ScifiKnife;
-			ChildWeapon->SetOwner(this);
-		}
-		else if (ChildWeapon->Name.Compare(TEXT("ScifiWeapon01")) == 0)
-		{
-			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
-			WeaponState = EWeaponState::ScifiWeapon01;
-			ChildWeapon->SetOwner(this);
-		}
-		else if (ChildWeapon->Name.Compare(TEXT("ScifiWeapon02")) == 0)
-		{
-			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
-			WeaponState = EWeaponState::ScifiWeapon02;
-			ChildWeapon->SetOwner(this);
-		}
-		UE_LOG(LogTemp, Warning, TEXT("Weapon : %s"), *ChildWeapon->GetOuter()->GetName());
-	}
-}
-
 void ARoboPlayer::UseItem(APickUpItemBase* PickedItem)
 {
 }
@@ -366,7 +309,6 @@ void ARoboPlayer::Input_PressE()
 	if (!TargetActor)
 	{
 		return;
-		//UE_LOG(LogTemp, Warning, TEXT("!TargetActor"));
 	}
 		
 
@@ -537,7 +479,7 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
 			WeaponState = EWeaponState::Pistol;
 			ChildWeapon->SetOwner(this);
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
+			UE_LOG(LogTemp, Warning, TEXT("SetWeaponChildActor : %s"), *UEnum::GetValueAsString(WeaponState));
 			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
 		else if (ChildWeapon->Name.Compare(TEXT("Rifle")) == 0)
@@ -545,7 +487,7 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
 			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
+			UE_LOG(LogTemp, Warning, TEXT("SetWeaponChildActor : %s"), *UEnum::GetValueAsString(WeaponState));
 			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
 		else if (ChildWeapon->Name.Compare(TEXT("ScifiKnife")) == 0)
@@ -553,7 +495,7 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
 			WeaponState = EWeaponState::ScifiKnife;
 			ChildWeapon->SetOwner(this);
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
+			UE_LOG(LogTemp, Warning, TEXT("SetWeaponChildActor : %s"), *UEnum::GetValueAsString(WeaponState));
 			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
 		else if (ChildWeapon->Name.Compare(TEXT("ScifiWeapon01")) == 0)
@@ -561,7 +503,7 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
 			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
+			UE_LOG(LogTemp, Warning, TEXT("SetWeaponChildActor : %s"), *UEnum::GetValueAsString(WeaponState));
 			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
 		else if (ChildWeapon->Name.Compare(TEXT("ScifiWeapon02")) == 0)
@@ -569,7 +511,7 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
 			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *UEnum::GetValueAsString(WeaponState));
+			UE_LOG(LogTemp, Warning, TEXT("SetWeaponChildActor : %s"), *UEnum::GetValueAsString(WeaponState));
 			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
 

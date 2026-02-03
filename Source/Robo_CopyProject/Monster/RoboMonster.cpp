@@ -95,7 +95,6 @@ void ARoboMonster::UpdateMonsterHPBar()
 
 void ARoboMonster::UpdateHPBarVisibility()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ARoboMonster::UpdateHPBarVisibility()"));
 	if (!MonsterHPWidget)
 	{
 		// 최적화: 위젯이 아예 꺼져있거나 컴포넌트가 없으면 계산 안 함

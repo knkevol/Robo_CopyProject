@@ -128,18 +128,13 @@ public:
 
 
 
-	// -------Find Actor
+	// -----------Find Actor----------------
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	AActor* FindNearestActor() const;
 
-	void EquipItem(class APickUpItemBase* PickedItem);
 	void UseItem(class APickUpItemBase* PickedItem);
 
-	// --------RPC
-	UFUNCTION(NetMulticast, Reliable)
-	void Multi_EquipItem(class APickUpItemBase* PickedItem);
-	void Multi_EquipItem_Implementation(class APickUpItemBase* PickedItem);
-
+	// -------------------RPC---------------------
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_EquipWeapon(TSubclassOf<AWeaponBase> WeaponClass);
 	void Server_EquipWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass);

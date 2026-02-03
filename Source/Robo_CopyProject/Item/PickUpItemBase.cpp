@@ -59,7 +59,7 @@ void APickUpItemBase::PressE_Implementation(ACharacter* Character)
 	switch (ItemType)
 	{
 	case EItemType::Weapon:
-		Cast<ARoboPlayer>(Character)->EquipItem(this);
+		//Cast<ARoboPlayer>(Character)->EquipItem(this);
 		break;
 	case EItemType::Item:
 		Cast<ARoboPlayer>(Character)->UseItem(this);
