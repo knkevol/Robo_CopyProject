@@ -136,8 +136,8 @@ public:
 
 	// -------------------RPC---------------------
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_EquipWeapon(TSubclassOf<AWeaponBase> WeaponClass);
-	void Server_EquipWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass);
+	void Server_EquipWeapon(TSubclassOf<AWeaponBase> WeaponClass, FName ItemRowName);
+	void Server_EquipWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass, FName ItemRowName);
 
 
 	UFUNCTION(BlueprintCallable)

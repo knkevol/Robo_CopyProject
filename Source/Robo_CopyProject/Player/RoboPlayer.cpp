@@ -294,10 +294,17 @@ AActor* ARoboPlayer::FindNearestActor() const
 	return NearestActor;
 }
 
-void ARoboPlayer::Server_EquipWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass)
+void ARoboPlayer::Server_EquipWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass, FName ItemRowName)
 {
 	CurrentWeaponClass = WeaponClass;
 	SetWeaponChildActor(WeaponClass);
+
+	AWeaponBase* NewWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+
+	if (NewWeapon)
+	{
+		NewWeapon->InitializeWeaponData(ItemRowName);
+	}
 }
 
 void ARoboPlayer::Input_PressE()

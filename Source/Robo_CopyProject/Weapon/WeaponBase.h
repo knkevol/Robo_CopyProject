@@ -53,9 +53,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
 	int32 CurBullet = 10;
 
-
 	ARoboPlayer* GetOwningPlayer() const;
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "RoboWeaponData")
+	void InitializeWeaponData(FName RowName);
 	// ---------------Weapon Action
 	UFUNCTION(BlueprintCallable)
 	void Reload();
