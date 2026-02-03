@@ -2,17 +2,22 @@
 
 
 #include "RoboMonster.h"
-#include "Engine/DamageEvents.h"
-#include "Kismet/GameplayStatics.h"
-#include "Engine/World.h"
 #include "RoboMonster_AIC.h"
-#include "Net/UnrealNetwork.h" //Replicated
+#include "../Item/GlowingOrbActor.h"
+#include "../Player/RoboPlayer.h"
+
+#include "Engine/DamageEvents.h"
+#include "Engine/World.h"
+#include "Engine/OverlapResult.h"
+
 #include "Components/ProgressBar.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "../Item/GlowingOrbActor.h"
-#include "../Player/RoboPlayer.h"
+
+#include "Net/UnrealNetwork.h" //Replicated
+
 #include "BehaviorTree/BehaviorTree.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "DrawDebugHelpers.h"
 
@@ -189,44 +194,43 @@ void ARoboMonster::ProcessAttackHit()
 	}
 
 	FHitResult HitResult;
-	// 공격 시작 지점: 몬스터 위치에서 약간 앞쪽
-	FVector Start = GetActorLocation() + GetActorForwardVector() * 50.0f;
-	// 공격 종료 지점: 시작 지점에서 사거리만큼 앞쪽
-	FVector End = Start + GetActorForwardVector() * AttackRange;
+	FVector AttackCenter = GetActorLocation() + GetActorForwardVector() * AttackRange;
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
-	bool bHasHit = GetWorld()->SweepSingleByChannel(
-		HitResult,
-		Start,
-		End,
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionShape AttackSphere = FCollisionShape::MakeSphere(AttackRadius);
+
+	bool bHasHit = GetWorld()->OverlapMultiByChannel(
+		OverlapResults,
+		AttackCenter,
 		FQuat::Identity,
-		ECC_Pawn,
-		FCollisionShape::MakeSphere(AttackRadius),
+		ECC_Pawn, // 또는 플레이어 전용 채널
+		AttackSphere,
 		Params
 	);
 
-	// 디버그 드로잉
-	FColor DrawColor = bHasHit ? FColor::Green : FColor::Red;
-	DrawDebugSphere(GetWorld(), End, AttackRadius, 16, DrawColor, false, 2.0f);
-
-	// 데미지 전달
 	if (bHasHit)
 	{
-		AActor* HitActor = HitResult.GetActor();
-		if (HitActor)
+		for (auto& Result : OverlapResults)
 		{
-			// Player->TakeDamage
-			UGameplayStatics::ApplyDamage(
-				HitActor,
-				AttackDamage,
-				GetController(),
-				this,
-				UDamageType::StaticClass()
-			);
+			AActor* HitActor = Result.GetActor();
+
+			if (HitActor && HitActor->IsA(ARoboPlayer::StaticClass()))
+			{
+				UGameplayStatics::ApplyDamage(
+					HitActor,
+					AttackDamage,
+					GetController(),
+					this,
+					UDamageType::StaticClass()
+				);
+				break;  //한번에 한명만 피격
+			}
 		}
 	}
+	DrawDebugSphere(GetWorld(), AttackCenter, AttackRadius, 16, bHasHit ? FColor::Green : FColor::Red, false, 1.0f);
 }
 
 void ARoboMonster::SpawnGlowingOrb()

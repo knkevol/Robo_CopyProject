@@ -99,7 +99,7 @@ public:
 	TObjectPtr<UParticleSystem> TakeDamageEffect;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
-	float AttackRange = 100.0f;
+	float AttackRange = 50.0f;
 
 	// 공격 반지름 (구체 크기)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")

@@ -38,12 +38,6 @@ void ARoboMonster_AIC::OnPossess(APawn* InPawn)
 		UBlackboardComponent* BlackboardComp = Blackboard.Get();
 		if (UseBlackboard(Monster->BTAsset->BlackboardAsset, BlackboardComp))
 		{
-			APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-			if (PlayerPawn)
-			{
-				// 블랙보드에 "Target"이라는 이름의 키가 있다면 할당
-				Blackboard->SetValueAsObject(TEXT("Target"), PlayerPawn);
-			}
 			RunBehaviorTree(Monster->BTAsset);
 		}
 		
@@ -53,7 +47,7 @@ void ARoboMonster_AIC::OnPossess(APawn* InPawn)
 	//Perception->OnTargetPerceptionInfoUpdated.AddDynamic(this, &AZombie_AIC::ProcessActorPerceptionInfo);
 	Perception->OnTargetPerceptionForgotten.AddDynamic(this, &ARoboMonster_AIC::ProcessPerceptionForget);
 	Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ARoboMonster_AIC::ProcessActorPerception);
-	SetGenericTeamId(3);
+	//SetGenericTeamId(3); = bDetectEnemies
 }
 
 void ARoboMonster_AIC::OnUnPossess()
