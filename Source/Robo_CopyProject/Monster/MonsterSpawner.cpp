@@ -19,25 +19,25 @@ void AMonsterSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	
-    if (HasAuthority())
-    {
-        if (SpawnDelay > 0.f)
-        {
-            FTimerHandle Handle;
-            GetWorldTimerManager().SetTimer(
-                Handle,
-                this,
-                &AMonsterSpawner::SpawnMonster,
-                SpawnDelay,
-                false
-            );
-            return;
-        }
-        if (MonsterClass)
-        {
-            SpawnMonster();
-        }
-    }
+    //if (HasAuthority())
+    //{
+    //    if (SpawnDelay > 0.f)
+    //    {
+    //        FTimerHandle Handle;
+    //        GetWorldTimerManager().SetTimer(
+    //            Handle,
+    //            this,
+    //            &AMonsterSpawner::SpawnMonster,
+    //            SpawnDelay,
+    //            false
+    //        );
+    //        return;
+    //    }
+    //    if (MonsterClass)
+    //    {
+    //        SpawnMonster();
+    //    }
+    //}
 }
 
 // Called every frame

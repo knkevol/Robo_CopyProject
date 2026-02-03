@@ -95,7 +95,7 @@ public:
 	//------------------Attack-----------------
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MonsterEffect")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterEffect")
 	TObjectPtr<UParticleSystem> TakeDamageEffect;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
