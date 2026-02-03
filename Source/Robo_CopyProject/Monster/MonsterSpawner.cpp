@@ -9,7 +9,7 @@
 AMonsterSpawner::AMonsterSpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 
 }
@@ -18,26 +18,6 @@ AMonsterSpawner::AMonsterSpawner()
 void AMonsterSpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	
-    //if (HasAuthority())
-    //{
-    //    if (SpawnDelay > 0.f)
-    //    {
-    //        FTimerHandle Handle;
-    //        GetWorldTimerManager().SetTimer(
-    //            Handle,
-    //            this,
-    //            &AMonsterSpawner::SpawnMonster,
-    //            SpawnDelay,
-    //            false
-    //        );
-    //        return;
-    //    }
-    //    if (MonsterClass)
-    //    {
-    //        SpawnMonster();
-    //    }
-    //}
 }
 
 // Called every frame

@@ -39,6 +39,10 @@ protected:
 	TObjectPtr<UWidgetComponent> MonsterHPWidget;
 
 	void UpdateMonsterHPBar(); // 실제 UI를 갱신하는 내부 함수
+
+	void UpdateHPBarVisibility(); // HP Widget Visible 처리
+
+	float ElapsedTime = 0.0f;
 	//---------------------------------------------------
 
 	// ---------------RPC-----------------

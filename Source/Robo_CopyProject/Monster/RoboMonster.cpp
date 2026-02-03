@@ -12,6 +12,7 @@
 
 #include "Components/ProgressBar.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Net/UnrealNetwork.h" //Replicated
@@ -20,6 +21,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "DrawDebugHelpers.h"
+#include "CollisionQueryParams.h"
 
 // Sets default values
 ARoboMonster::ARoboMonster()
@@ -44,6 +46,12 @@ ARoboMonster::ARoboMonster()
 void ARoboMonster::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//handle Spawn Monster
+	if (MonsterHPWidget)
+	{
+		MonsterHPWidget->RegisterComponent();
+	}
 	
 }
 
@@ -83,6 +91,72 @@ void ARoboMonster::UpdateMonsterHPBar()
 			UE_LOG(LogTemp, Warning, TEXT("HPWidget X"));
 		}
 	}
+}
+
+void ARoboMonster::UpdateHPBarVisibility()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ARoboMonster::UpdateHPBarVisibility()"));
+	if (!MonsterHPWidget)
+	{
+		// 최적화: 위젯이 아예 꺼져있거나 컴포넌트가 없으면 계산 안 함
+		return;
+	}
+
+	// 1. 카메라 위치 가져오기
+	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+	if (!CameraManager) return;
+
+	FVector CameraLocation = CameraManager->GetCameraLocation();
+	FVector WidgetLocation = MonsterHPWidget->GetComponentLocation();
+
+	const float MaxVisibleDistance = 2000.0f;
+	float DistanceSquared = FVector::DistSquared(CameraLocation, WidgetLocation);
+
+	if (DistanceSquared > FMath::Square(MaxVisibleDistance))
+	{
+		// 너무 멀면 아예 안 보이게 처리하고 종료
+		if (MonsterHPWidget->IsVisible())
+		{
+			MonsterHPWidget->SetVisibility(false);
+		}
+		return;
+	}
+
+	// 3. Trace 설정
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this); // 나 자신(몬스터)은 무시
+
+	// 플레이어 캐릭터도 무시하고 싶다면 추가
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if (PlayerPawn) Params.AddIgnoredActor(PlayerPawn);
+
+	// 4. Line Trace 발사 (Visibility 채널 사용)
+	// 장애물(Wall, StaticMesh 등)이 중간에 있으면 true 리턴
+	bool bIsBlocked = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		CameraLocation,
+		WidgetLocation,
+		ECC_Visibility,
+		Params
+	);
+
+	// 5. 위젯 컴포넌트의 가시성 조절
+	// 장애물에 가려졌다면 위젯을 숨김 (Hidden), 아니면 보여줌 (Visible)
+	// 단, 위젯 자체의 투명도를 조절하는 것이 아니라 컴포넌트 렌더링을 끄는 방식입니다.
+	if (bIsBlocked)
+	{
+		// 무언가에 가려짐 -> 위젯 숨기기
+		MonsterHPWidget->SetVisibility(false);
+	}
+	else
+	{
+		// 가려지지 않음 -> 위젯 보여주기
+		MonsterHPWidget->SetVisibility(true);
+	}
+
+	// [디버그용] 실제 선이 어떻게 그려지는지 보고 싶다면 주석 해제
+	//DrawDebugLine(GetWorld(), CameraLocation, WidgetLocation, bIsBlocked ? FColor::Red : FColor::Green, false, -1.0f, 0, 2.0f);
 }
 
 void ARoboMonster::Multi_MonsterDie_Implementation()
@@ -139,7 +213,14 @@ void ARoboMonster::Multi_SpawnHitEffect_Implementation(FVector_NetQuantize Locat
 void ARoboMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	ElapsedTime += DeltaTime;
 
+	if (ElapsedTime >= 0.1f)
+	{
+		UpdateHPBarVisibility();
+		ElapsedTime = 0.0f;
+	}
 }
 
 void ARoboMonster::SetState(EMonsterState NewState)
