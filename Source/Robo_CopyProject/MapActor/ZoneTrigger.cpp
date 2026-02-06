@@ -4,7 +4,8 @@
 #include "ZoneTrigger.h"
 #include "Components/BoxComponent.h"
 #include "../Player/RoboPlayer.h"
-#include "../Monster/MonsterSpawner.h"
+#include "../Monster/MonsterSpawnerBase.h"
+#include "../Monster/BMonsterSpawner.h"
 
 // Sets default values
 AZoneTrigger::AZoneTrigger()
@@ -41,13 +42,13 @@ void AZoneTrigger::OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 
 	if (OtherActor && OtherActor != this && OtherActor->IsA(ARoboPlayer::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Spawning Monsters..."));
-
-		for (AMonsterSpawner* Spawner : TargetSpawners)
+		UE_LOG(LogTemp, Warning, TEXT("AZoneTrigger::OnBoxOverlap_OtherActor"));
+		for (TObjectPtr<AMonsterSpawnerBase> Spawner : TargetSpawners)
 		{
 			if (Spawner)
 			{
-				Spawner->SpawnMonster();
+				UE_LOG(LogTemp, Warning, TEXT("AZoneTrigger::OnBoxOverlap_Spawn"));
+				Spawner->ExecuteSpawn();
 			}
 		}
 		TriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &AZoneTrigger::OnBoxOverlap);

@@ -27,6 +27,12 @@ void AMonsterSpawner::Tick(float DeltaTime)
 
 }
 
+void AMonsterSpawner::ExecuteSpawn()
+{
+    UE_LOG(LogTemp, Warning, TEXT("AMonsterSpawner::ExecuteSpawn()"));
+    SpawnMonster();
+}
+
 void AMonsterSpawner::SpawnMonster()
 {
     if (!MonsterClass)

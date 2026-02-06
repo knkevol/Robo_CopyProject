@@ -17,8 +17,6 @@ void UAnimNotify_MonsterAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 
     if (Monster)
     {
-        // 2. 몬스터 내부에 만들어둔 "공격 판정 함수"를 호출합니다.
-        // 이 함수 내부에서 Sweep/LineTrace를 통해 플레이어를 찾고 ApplyDamage를 호출합니다.
         Monster->ProcessAttackHit();
     }
 }

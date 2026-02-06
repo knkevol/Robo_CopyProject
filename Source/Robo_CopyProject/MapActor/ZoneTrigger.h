@@ -29,7 +29,7 @@ protected:
 	TObjectPtr<class UBoxComponent> TriggerBox;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboTrigger")
-	TArray<TObjectPtr<class AMonsterSpawner>> TargetSpawners;
+	TArray<TObjectPtr<class AMonsterSpawnerBase>> TargetSpawners;
 
 	UFUNCTION()
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

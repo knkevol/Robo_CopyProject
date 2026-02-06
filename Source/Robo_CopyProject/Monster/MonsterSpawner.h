@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "MonsterSpawnerBase.h"
 #include "MonsterSpawner.generated.h"
 
 UCLASS()
-class ROBO_COPYPROJECT_API AMonsterSpawner : public AActor
+class ROBO_COPYPROJECT_API AMonsterSpawner : public AMonsterSpawnerBase
 {
 	GENERATED_BODY()
 	
@@ -22,10 +22,6 @@ protected:
 	UPROPERTY()
 	TArray<AActor*> SpawnedMonsters;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboSpawner")
 	TSubclassOf<class APawn> MonsterClass;
 
@@ -34,7 +30,13 @@ public:
 
 	void SpawnMonster();
 
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void ExecuteSpawn() override;
+
 	UFUNCTION(BlueprintCallable)
-	int32 GetAliveMonsterCount();
+	virtual int32 GetAliveMonsterCount() override;
 
 };

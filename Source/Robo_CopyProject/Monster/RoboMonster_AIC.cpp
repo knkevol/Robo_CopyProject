@@ -22,8 +22,8 @@ ARoboMonster_AIC::ARoboMonster_AIC()
 	Sight->LoseSightRadius = 900.0f;
 	Sight->PeripheralVisionAngleDegrees = 45.f;
 	Sight->DetectionByAffiliation.bDetectEnemies = true;
-	Sight->DetectionByAffiliation.bDetectFriendlies = false;
-	Sight->DetectionByAffiliation.bDetectNeutrals = false;
+	Sight->DetectionByAffiliation.bDetectFriendlies = true;
+	Sight->DetectionByAffiliation.bDetectNeutrals = true;
 	Perception->ConfigureSense(*Sight);
 	Perception->SetDominantSense(*Sight->GetSenseImplementation());
 }
