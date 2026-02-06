@@ -45,7 +45,21 @@ void AMonsterSpawner::SpawnMonster()
 
     if (Monster)
     {
+        SpawnedMonsters.Add(Monster);
         UE_LOG(LogTemp, Warning, TEXT("Monster Spawned"));
     }
+}
+
+int32 AMonsterSpawner::GetAliveMonsterCount()
+{
+    int32 Count = 0;
+    for (AActor* Monster : SpawnedMonsters)
+    {
+        if (IsValid(Monster))
+        {
+            Count++;
+        }
+    }
+    return Count;
 }
 

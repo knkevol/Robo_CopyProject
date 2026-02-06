@@ -38,15 +38,30 @@ ADoorActor::ADoorActor()
 void ADoorActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 닫힌 위치 기억
+	ClosedLocation = GetActorLocation();
+	LeftInitRot = Left->GetRelativeRotation();
+	RightInitRot = Right->GetRelativeRotation();
 	
 }
 
-void ADoorActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ADoorActor::TryOpenDoor()
 {
+	if (CanOpen())
+	{
+		bIsOpen = true;
+		StartOpenMove();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("X"));
+	}
 }
 
-void ADoorActor::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+bool ADoorActor::CanOpen_Implementation()
 {
+	return true;
 }
 
 // Called every frame
@@ -65,34 +80,21 @@ void ADoorActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 
 void ADoorActor::InteractDoor(ACharacter* Interactor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ADoorActor::InteractDoor"));
-	if (!HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ADoorActor::InteractDoor_!HasAuthority"));
-		return;
-	}
-
 	if (bIsOpen)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ADoorActor::InteractDoor_!bIsOpen"));
 		return;
 	}
-	bIsOpen = true;
 
-	// 닫힌 위치 기억
-	ClosedLocation = GetActorLocation();
-
-	StartOpenMove();
+	// 서버에서만 실행 (멀티플레이어라면 중요)
+	if (HasAuthority())
+	{
+		TryOpenDoor();
+	}
+	
 }
 
 void ADoorActor::StartOpenMove()
-{
-	
-	LeftInitRot = Left->GetRelativeRotation();
-	RightInitRot = Right->GetRelativeRotation();
-
-	
-
+{	
 	MoveAlpha = 0.f;
 
 	GetWorldTimerManager().SetTimer(MoveTimerHandle, this, &ADoorActor::UpdateDoorMove, 0.016f, true);
@@ -124,8 +126,6 @@ void ADoorActor::OnRep_IsDoorOpen()
 	UE_LOG(LogTemp, Warning, TEXT("ADoorActor::OnRep_IsDoorOpen()"));
 	if (bIsOpen)
 	{
-
-		UE_LOG(LogTemp, Warning, TEXT("ADoorActor::OnRep_IsDoorOpen()_bIsOpen"));
 		StartOpenMove();
 	}
 }

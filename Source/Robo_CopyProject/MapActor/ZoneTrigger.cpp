@@ -55,7 +55,7 @@ void AZoneTrigger::OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 
 	bIsTriggered = true;
 
-	Destroy();
+	//Destroy();
 
 }
 
@@ -64,5 +64,17 @@ void AZoneTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+bool AZoneTrigger::IsZoneCleared()
+{
+	for (auto Spawner : TargetSpawners)
+	{
+		if (Spawner && Spawner->GetAliveMonsterCount() > 0)
+		{
+			return false; 
+		}
+	}
+	return true;
 }
 

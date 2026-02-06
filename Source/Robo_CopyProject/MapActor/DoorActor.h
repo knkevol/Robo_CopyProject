@@ -44,24 +44,13 @@ protected:
 	float MoveAlpha = 0.f;
 
 
-	UFUNCTION()
-	void OnOverlapBegin(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult
-	);
+	UFUNCTION(BlueprintCallable, Category = "Door")
+	void TryOpenDoor();
 
-	/** 겹침이 끝날 때 호출될 함수 */
-	UFUNCTION()
-	void OnOverlapEnd(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex
-	);
+	//가상함수
+	UFUNCTION(BlueprintNativeEvent, Category = "Door")
+	bool CanOpen();
+	virtual bool CanOpen_Implementation();
 
 public:	
 	// Called every frame
