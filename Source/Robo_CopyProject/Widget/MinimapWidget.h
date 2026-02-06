@@ -17,8 +17,11 @@ class ROBO_COPYPROJECT_API UMinimapWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget", meta = (WidgetBind))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget", meta = (WidgetBind))
 	TObjectPtr<class UImage> PMinimapImage;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget", meta = (WidgetBind))
+	TObjectPtr<class UTextBlock> PlayTimeText;
 
 	virtual void NativeOnInitialized() override;
 

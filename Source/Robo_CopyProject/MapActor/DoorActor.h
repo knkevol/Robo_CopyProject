@@ -20,22 +20,60 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	TObjectPtr<class UBoxComponent> Box;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	TObjectPtr<class UStaticMeshComponent> DoorWay;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	TObjectPtr<class UStaticMeshComponent> Left;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	TObjectPtr<class UStaticMeshComponent> Right;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	FName InputKey;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
+	float TargetYaw = 90.f; //Default
+
+	FTimerHandle MoveTimerHandle;
+	FRotator LeftInitRot;
+	FRotator RightInitRot;
+	float MoveAlpha = 0.f;
+
+
+	UFUNCTION()
+	void OnOverlapBegin(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+
+	/** 겹침이 끝날 때 호출될 함수 */
+	UFUNCTION()
+	void OnOverlapEnd(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex
+	);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Robo", ReplicatedUsing = "OnRep_IsDoorOpen")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData", ReplicatedUsing = "OnRep_IsDoorOpen")
 	uint8 bIsOpen : 1 = false;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Robo")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	FVector ClosedLocation;
-
-	FTimerHandle MoveTimerHandle;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Robo")
-	float MoveAlpha = 0.f;
 
 	virtual void InteractDoor(ACharacter* Interactor) override;
 

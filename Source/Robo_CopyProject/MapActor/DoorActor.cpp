@@ -3,6 +3,8 @@
 
 #include "DoorActor.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 
 // Sets default values
@@ -10,8 +12,25 @@ ADoorActor::ADoorActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	bReplicates = true;
+
+	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
+	SetRootComponent(Box);
+	Box->SetBoxExtent(FVector(200.0f, 300.0f, 300.0f));
+
+	DoorWay = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorWay"));
+	DoorWay->SetupAttachment(Box);
+	DoorWay->SetRelativeLocation(FVector(205.0f, 0.0f, -295.0f));
+	DoorWay->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
+
+	Right = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Right"));
+	Right->SetupAttachment(DoorWay);
+	Right->SetRelativeLocation(FVector(-11.0f, -131.0f, 0.0f));
+	Left = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Left"));
+	Left->SetupAttachment(DoorWay);
+	Left->SetRelativeLocation(FVector(-11.0f, 132.0f, 0.0f));
+
+	InputKey = TEXT("F");
 
 }
 
@@ -20,6 +39,14 @@ void ADoorActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ADoorActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+}
+
+void ADoorActor::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
 }
 
 // Called every frame
@@ -60,35 +87,35 @@ void ADoorActor::InteractDoor(ACharacter* Interactor)
 
 void ADoorActor::StartOpenMove()
 {
+	
+	LeftInitRot = Left->GetRelativeRotation();
+	RightInitRot = Right->GetRelativeRotation();
+
+	
+
 	MoveAlpha = 0.f;
 
-	GetWorldTimerManager().SetTimer(
-		MoveTimerHandle,
-		this,
-		&ADoorActor::UpdateDoorMove,
-		0.016f,
-		true
-	);
+	GetWorldTimerManager().SetTimer(MoveTimerHandle, this, &ADoorActor::UpdateDoorMove, 0.016f, true);
 }
 
 void ADoorActor::UpdateDoorMove()
 {
-	MoveAlpha += 0.016f / 1.0f; // 1초 이동
+	MoveAlpha += 0.016f;
 
-	FVector TargetLocation = ClosedLocation + FVector(580.f, 0.f, 0.f);
-	FVector NewLocation = FMath::Lerp(ClosedLocation, TargetLocation, MoveAlpha);
+	FRotator LeftTargetRot = LeftInitRot;
+	LeftTargetRot.Yaw -= TargetYaw;
+	Left->SetRelativeRotation(FMath::Lerp(LeftInitRot, LeftTargetRot, MoveAlpha));
 
-	SetActorLocation(NewLocation);
+	FRotator RightTargetRot = RightInitRot;
+	RightTargetRot.Yaw += TargetYaw;
+	Right->SetRelativeRotation(FMath::Lerp(RightInitRot, RightTargetRot, MoveAlpha));
 
 	if (MoveAlpha >= 1.f)
 	{
-		GetWorldTimerManager().ClearTimer(MoveTimerHandle);
+		Left->SetRelativeRotation(LeftTargetRot);
+		Right->SetRelativeRotation(RightTargetRot);
 
-		// 이동 완료 후 제거
-		if (HasAuthority())
-		{
-			Destroy();
-		}
+		GetWorldTimerManager().ClearTimer(MoveTimerHandle);
 	}
 }
 

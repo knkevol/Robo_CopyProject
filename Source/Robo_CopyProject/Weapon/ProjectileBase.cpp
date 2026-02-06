@@ -16,7 +16,7 @@ AProjectileBase::AProjectileBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
-	RootComponent = Box;
+	SetRootComponent(Box);
 	//Hit Event
 	Box->GetBodyInstance()->bNotifyRigidBodyCollision = true;
 
