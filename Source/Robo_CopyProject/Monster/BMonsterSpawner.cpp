@@ -53,31 +53,17 @@ void ABMonsterSpawner::SpawnBMonster()
    
     if (Monster)
     {
-        SpawnedBMonsters.Add(Monster);
-        UE_LOG(LogTemp, Warning, TEXT("BMonster Spawned"));
-
-        auto temp = Monster->GetController();
-        if (temp)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ABMonsterSpawner::SpawnBMonster() : %s"), *temp->GetName());
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ABMonsterSpawner::SpawnBMonster() : None"));
-        }
-       
+        SpawnedBMonster = Monster;
+        UE_LOG(LogTemp, Warning, TEXT("BMonster Spawned"));       
     }
 }
 
 int32 ABMonsterSpawner::GetAliveMonsterCount()
 {
     int32 Count = 0;
-    for (AActor* BMonster : SpawnedBMonsters)
+    if (IsValid(SpawnedBMonster))
     {
-        if (IsValid(BMonster))
-        {
-            Count++;
-        }
+        Count++;
     }
     return Count;
 }

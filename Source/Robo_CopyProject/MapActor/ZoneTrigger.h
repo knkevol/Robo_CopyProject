@@ -35,6 +35,7 @@ protected:
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
-	bool bIsTriggered = false;
+	uint8 bIsTriggered : 1 = false;
+	uint8 bIsBossSpawner : 1;
 
 };

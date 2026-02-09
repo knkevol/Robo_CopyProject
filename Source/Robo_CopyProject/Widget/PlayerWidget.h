@@ -14,6 +14,9 @@ class ROBO_COPYPROJECT_API UPlayerWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+protected:
+	virtual void NativeConstruct() override;
+
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget", meta = (WidgetBind))
 	TObjectPtr<class UProjectileWidget> ProjectileWidget;
@@ -32,5 +35,7 @@ public:
 
 
 	void UpdateBullet(int32 Cur, int32 Max);
+
+	void SetTopWidgetVisibility(bool bIsVisible);
 	
 };

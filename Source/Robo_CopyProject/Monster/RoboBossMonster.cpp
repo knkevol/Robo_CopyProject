@@ -5,8 +5,12 @@
 #include "Net/UnrealNetwork.h" //Replicated
 #include "../Player/RoboPlayer.h"
 
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/OverlapResult.h"
+
+#include "../Widget/PlayerTopWidget.h"
+#include "Components/ProgressBar.h"
 
 
 // Sets default values
@@ -14,6 +18,8 @@ ARoboBossMonster::ARoboBossMonster()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MonsterCapsule"));
 	GetMesh()->SetCollisionProfileName(TEXT("MonsterMesh"));
 
 
@@ -95,6 +101,7 @@ void ARoboBossMonster::ProcessAttackHit_Boss()
 
 void ARoboBossMonster::OnRep_BMonsterCurrentHP()
 {
+	OnBossHpChanged.Broadcast(CurrentHP / MaxHP);
 }
 
 void ARoboBossMonster::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const

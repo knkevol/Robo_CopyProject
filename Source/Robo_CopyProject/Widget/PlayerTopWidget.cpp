@@ -3,3 +3,7 @@
 
 #include "PlayerTopWidget.h"
 
+void UPlayerTopWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+}

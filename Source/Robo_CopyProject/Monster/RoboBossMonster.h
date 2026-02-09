@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "RoboBossMonster.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBossChangedHP, const float, Percent);
+
 UENUM(BlueprintType)
 enum class EBMonsterState : uint8
 {
@@ -40,6 +42,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat", Replicated)
 	EBMonsterState CurrentState;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnBossChangedHP OnBossHpChanged;
+
 	UFUNCTION()
 	void OnRep_BMonsterCurrentHP();
 	//------------------------------------------------
@@ -59,6 +64,16 @@ public:
 	FORCEINLINE const EBMonsterState GetCurrentState() { return CurrentState; }
 
 	void SetState(EBMonsterState NewState);
+
+	//-------------------Boss Widget-------------------
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat")
+	FName BossName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat")
+	TObjectPtr<class UPlayerTopWidget> TopWidget;
+
+	void SetPlayerTopWidget(UPlayerTopWidget* InWidget) { TopWidget = InWidget; }
+	//-----------------------------------------------
 
 	//--------------------------AI--------------------
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat")

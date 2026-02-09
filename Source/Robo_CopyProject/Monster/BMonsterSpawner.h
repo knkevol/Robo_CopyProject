@@ -15,12 +15,12 @@ public:
 	// Sets default values for this actor's properties
 	ABMonsterSpawner();
 
+	UPROPERTY()
+	TObjectPtr<AActor> SpawnedBMonster;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UPROPERTY()
-	TArray<AActor*> SpawnedBMonsters;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboSpawner")
 	TSubclassOf<class APawn> BMonsterClass;

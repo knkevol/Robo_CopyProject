@@ -3,9 +3,15 @@
 
 #include "ZoneTrigger.h"
 #include "Components/BoxComponent.h"
+
 #include "../Player/RoboPlayer.h"
+#include "../Player/RoboPlayerController.h"
+
+#include "../Monster/RoboBossMonster.h"
 #include "../Monster/MonsterSpawnerBase.h"
 #include "../Monster/BMonsterSpawner.h"
+
+#include "../Widget/PlayerWidget.h"
 
 // Sets default values
 AZoneTrigger::AZoneTrigger()
@@ -47,10 +53,31 @@ void AZoneTrigger::OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		{
 			if (Spawner)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("AZoneTrigger::OnBoxOverlap_Spawn"));
 				Spawner->ExecuteSpawn();
+
+				//Boss Spawn
+				if (ABMonsterSpawner* BSpawner = Cast<ABMonsterSpawner>(Spawner))
+				{
+					bIsBossSpawner = true;
+					
+				}
 			}
 		}
+		//Boss Spawner¸é TopWidget ¶ç¿ì±â
+		if (bIsBossSpawner)
+		{
+			ARoboPlayer* PlayerPawn = Cast<ARoboPlayer>(OtherActor);
+			if (PlayerPawn)
+			{
+				ARoboPlayerController* PC = Cast<ARoboPlayerController>(PlayerPawn->GetController());
+				//TopWidget Visible
+				if (PC && PC->IsLocalController())
+				{
+					PC->PlayerWidgetObject->SetTopWidgetVisibility(true);
+				}
+			}
+		}
+		
 		TriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &AZoneTrigger::OnBoxOverlap);
 	}
 

@@ -77,7 +77,6 @@ void ARoboMonster::UpdateMonsterHPBar()
 		UUserWidget* HPWidget = Cast<UUserWidget>(MonsterHPWidget->GetUserWidgetObject());
 		if (HPWidget)
 		{
-			// 위젯 내의 ProgressBar 찾기 (이름이 "HPBar"인 경우)
 			UProgressBar* HPBar = Cast<UProgressBar>(HPWidget->GetWidgetFromName(TEXT("MonsterHpBar")));
 			if (HPBar)
 			{
