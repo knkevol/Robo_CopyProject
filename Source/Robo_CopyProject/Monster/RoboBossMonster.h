@@ -64,4 +64,18 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat")
 	TObjectPtr<class UBehaviorTree> BTAsset;
 	//------------------------------------------------
+
+	//----------------Attack----------------
+	// 공격 반지름 (구체 크기)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat")
+	float AttackRadius = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat")
+	float AttackRange = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat")
+	float AttackDamage = 10.0f;
+
+	void ProcessAttackHit_Boss();
+	//------------------------------------
 };

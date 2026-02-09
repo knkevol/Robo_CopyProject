@@ -17,6 +17,6 @@ void UAnimNotify_BossAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 
     if (BMonster)
     {
-        //BMonster->ProcessAttackHit();
+        BMonster->ProcessAttackHit_Boss();
     }
 }

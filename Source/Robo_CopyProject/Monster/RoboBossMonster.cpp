@@ -3,6 +3,11 @@
 
 #include "RoboBossMonster.h"
 #include "Net/UnrealNetwork.h" //Replicated
+#include "../Player/RoboPlayer.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "Engine/OverlapResult.h"
+
 
 // Sets default values
 ARoboBossMonster::ARoboBossMonster()
@@ -36,6 +41,53 @@ void ARoboBossMonster::SetState(EBMonsterState NewState)
 		CurrentState = NewState;
 		UE_LOG(LogTemp, Error, TEXT("BossMonsterState : %s"), *UEnum::GetValueAsString(CurrentState));
 	}
+}
+
+void ARoboBossMonster::ProcessAttackHit_Boss()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	FHitResult HitResult;
+	FVector AttackCenter = GetActorLocation();
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionShape AttackSphere = FCollisionShape::MakeSphere(AttackRadius);
+
+	bool bHasHit = GetWorld()->OverlapMultiByChannel(
+		OverlapResults,
+		AttackCenter,
+		FQuat::Identity,
+		ECC_Pawn, // 또는 플레이어 전용 채널
+		AttackSphere,
+		Params
+	);
+
+	if (bHasHit)
+	{
+		for (auto& Result : OverlapResults)
+		{
+			AActor* HitActor = Result.GetActor();
+
+			if (HitActor && HitActor->IsA(ARoboPlayer::StaticClass()))
+			{
+				UGameplayStatics::ApplyDamage(
+					HitActor,
+					AttackDamage,
+					GetController(),
+					this,
+					UDamageType::StaticClass()
+				);
+				break;  //한번에 한명만 피격
+			}
+		}
+	}
+	DrawDebugSphere(GetWorld(), AttackCenter, AttackRadius, 16, bHasHit ? FColor::Green : FColor::Red, false, 1.0f);
 }
 
 void ARoboBossMonster::OnRep_BMonsterCurrentHP()
