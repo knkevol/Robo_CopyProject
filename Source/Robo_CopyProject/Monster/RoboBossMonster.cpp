@@ -39,7 +39,6 @@ void ARoboBossMonster::SetState(EBMonsterState NewState)
 	if (HasAuthority())
 	{
 		CurrentState = NewState;
-		UE_LOG(LogTemp, Error, TEXT("BossMonsterState : %s"), *UEnum::GetValueAsString(CurrentState));
 	}
 }
 
@@ -51,14 +50,14 @@ void ARoboBossMonster::ProcessAttackHit_Boss()
 	}
 
 	FHitResult HitResult;
-	FVector AttackCenter = GetActorLocation();
+	FVector AttackCenter = GetActorLocation() + GetActorForwardVector() * AttackRange;
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionShape AttackSphere = FCollisionShape::MakeSphere(AttackRadius);
-
+	UE_LOG(LogTemp, Warning, TEXT("ARoboBossMonster::ProcessAttackHit_Boss()"));
 	bool bHasHit = GetWorld()->OverlapMultiByChannel(
 		OverlapResults,
 		AttackCenter,
@@ -70,12 +69,14 @@ void ARoboBossMonster::ProcessAttackHit_Boss()
 
 	if (bHasHit)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ARoboBossMonster::ProcessAttackHit_Boss()_bHasHit"));
 		for (auto& Result : OverlapResults)
 		{
 			AActor* HitActor = Result.GetActor();
 
 			if (HitActor && HitActor->IsA(ARoboPlayer::StaticClass()))
 			{
+				UE_LOG(LogTemp, Warning, TEXT("ARoboBossMonster::ProcessAttackHit_Boss()_HitActor"));
 				UGameplayStatics::ApplyDamage(
 					HitActor,
 					AttackDamage,

@@ -18,5 +18,6 @@ void UAnimNotify_MonsterAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
     if (Monster)
     {
         Monster->ProcessAttackHit();
+        UE_LOG(LogTemp, Warning, TEXT("Monster->ProcessAttackHit()"));
     }
 }
