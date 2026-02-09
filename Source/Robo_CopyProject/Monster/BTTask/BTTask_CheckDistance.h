@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "../RoboMonster.h"
+#include "../RoboBossMonster.h"
 #include "BTTask_CheckDistance.generated.h"
 
 UENUM(BlueprintType)
@@ -32,6 +33,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCondition")
 	EMonsterState TargetState;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCondition")
+	EBMonsterState TargetBState;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCondition")
 	float TargetDistance;

@@ -34,11 +34,19 @@ void ARoboBossMonster::SetState(EBMonsterState NewState)
 	if (HasAuthority())
 	{
 		CurrentState = NewState;
+		UE_LOG(LogTemp, Error, TEXT("BossMonsterState : %s"), *UEnum::GetValueAsString(CurrentState));
 	}
 }
 
 void ARoboBossMonster::OnRep_BMonsterCurrentHP()
 {
+}
+
+void ARoboBossMonster::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const
+{
+	Super::GetActorEyesViewPoint(OutLocation, OutRotation);
+
+	OutLocation.Z -= 110.f;
 }
 
 // Called every frame

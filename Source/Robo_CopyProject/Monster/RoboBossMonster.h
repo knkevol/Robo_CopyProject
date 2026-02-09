@@ -44,6 +44,9 @@ protected:
 	void OnRep_BMonsterCurrentHP();
 	//------------------------------------------------
 
+	//---------------Perception-----------------------
+	virtual void GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const override;
+	//------------------------------------------------
 	
 
 public:	

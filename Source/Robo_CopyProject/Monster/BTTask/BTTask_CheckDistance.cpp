@@ -13,20 +13,30 @@ UBTTask_CheckDistance::UBTTask_CheckDistance()
 EBTNodeResult::Type UBTTask_CheckDistance::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AActor* Player = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(TEXT("Target")));
-	//if (!Player)
-	//{
-	//	UE_LOG(LogTemp, Error, TEXT("UBTTask_CheckDistance: Player (Target) is Null!"));
-	//	return EBTNodeResult::Failed;
-	//}
+	if (!Player)
+	{
+		//UE_LOG(LogTemp, Error, TEXT("UBTTask_CheckDistance: Player (Target) is Null!"));
+		return EBTNodeResult::Failed;
+	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("UBTTask_CheckDistance::ExecuteTask_Player : %s"), *Player->GetName());
 	ARoboMonster* RMonster = Cast<ARoboMonster>(OwnerComp.GetAIOwner()->GetPawn());
+	ARoboBossMonster* BMonster = Cast<ARoboBossMonster>(OwnerComp.GetAIOwner()->GetPawn());
 
-	if (Player && RMonster)
+	if (Player && (RMonster || BMonster))
 	{
-		FVector RMonsterLocation = RMonster->GetActorLocation();
+		FVector MonsterLocation;
+		if (RMonster)
+		{
+			MonsterLocation = RMonster->GetActorLocation();
+		}
+		else
+		{
+			MonsterLocation = BMonster->GetActorLocation();
+		}
+		
 		FVector PlayerLocation = Player->GetActorLocation();
-		float Distance = FVector::Distance(RMonsterLocation, PlayerLocation);
+		float Distance = FVector::Distance(MonsterLocation, PlayerLocation);
 
 		switch (TargetCondition)
 		{
@@ -34,8 +44,17 @@ EBTNodeResult::Type UBTTask_CheckDistance::ExecuteTask(UBehaviorTreeComponent& O
 		{
 			if (Distance > TargetDistance)
 			{
-				RMonster->SetState(TargetState);
-				OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), (uint8)TargetState);
+				if (RMonster)
+				{
+					RMonster->SetState(TargetState);
+					OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), (uint8)TargetState);
+				}
+				else
+				{
+					BMonster->SetState(TargetBState);
+					OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), (uint8)TargetBState);
+				}
+				
 			}
 		}
 		break;
@@ -43,8 +62,16 @@ EBTNodeResult::Type UBTTask_CheckDistance::ExecuteTask(UBehaviorTreeComponent& O
 		{
 			if (Distance < TargetDistance)
 			{
-				RMonster->SetState(TargetState);
-				OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), (uint8)TargetState);
+				if (RMonster)
+				{
+					RMonster->SetState(TargetState);
+					OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), (uint8)TargetState);
+				}
+				else
+				{
+					BMonster->SetState(TargetBState);
+					OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), (uint8)TargetBState);
+				}
 			}
 		}
 		break;

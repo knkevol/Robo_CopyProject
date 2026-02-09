@@ -63,6 +63,7 @@ void ARoboBMonster_AIC::ProcessPerception(const TArray<AActor*>& UpdatedActors)
 
 void ARoboBMonster_AIC::ProcessActorPerception(AActor* Actor, FAIStimulus Stimulus)
 {
+	UE_LOG(LogTemp, Log, TEXT("Perception Updated: %s"), *Actor->GetName());
 	if (Stimulus.Type == UAISense::GetSenseID<UAISense_Sight>())
 	{
 		if (Stimulus.WasSuccessfullySensed()) //∫√¿ª∂ß
@@ -70,7 +71,12 @@ void ARoboBMonster_AIC::ProcessActorPerception(AActor* Actor, FAIStimulus Stimul
 			//UE_LOG(LogTemp, Warning, TEXT("Type Sight"));
 
 			ARoboPlayer* Player = Cast<ARoboPlayer>(Actor);
-			ARoboBossMonster* BMonster = Cast<ARoboBossMonster>(GetPawn());
+			APawn* MyPawn = GetPawn();
+			UE_LOG(LogTemp, Warning, TEXT("Sensed Actor: %s, MyPawn: %s"),
+				Player ? *Player->GetName() : TEXT("Not Player"),
+				MyPawn ? *MyPawn->GetName() : TEXT("No Pawn"));
+
+			ARoboBossMonster* BMonster = Cast<ARoboBossMonster>(MyPawn);
 			if (Player && BMonster)
 			{
 				if (BMonster->GetCurrentState() == EBMonsterState::Death)
