@@ -15,6 +15,8 @@ ARoboBossMonster::ARoboBossMonster()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	GetMesh()->SetCollisionProfileName(TEXT("MonsterMesh"));
+
+
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 

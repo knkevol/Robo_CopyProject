@@ -50,10 +50,22 @@ void ABMonsterSpawner::SpawnBMonster()
         Params
     );
 
+   
     if (Monster)
     {
         SpawnedBMonsters.Add(Monster);
         UE_LOG(LogTemp, Warning, TEXT("BMonster Spawned"));
+
+        auto temp = Monster->GetController();
+        if (temp)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("ABMonsterSpawner::SpawnBMonster() : %s"), *temp->GetName());
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("ABMonsterSpawner::SpawnBMonster() : None"));
+        }
+       
     }
 }
 

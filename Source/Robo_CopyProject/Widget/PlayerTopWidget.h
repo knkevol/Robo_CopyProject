@@ -13,5 +13,12 @@ UCLASS()
 class ROBO_COPYPROJECT_API UPlayerTopWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget", meta = (WidgetBind))
+	TObjectPtr<class UTextBlock> BossNameText;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget", meta = (WidgetBind))
+	TObjectPtr<class UProgressBar> BossHPBar;
 	
 };

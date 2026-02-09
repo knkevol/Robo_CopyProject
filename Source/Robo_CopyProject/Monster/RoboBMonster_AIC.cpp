@@ -31,13 +31,13 @@ void ARoboBMonster_AIC::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	ARoboBossMonster* Monster = Cast<ARoboBossMonster>(InPawn);
-	if (Monster && Monster->BTAsset)
+	ARoboBossMonster* BMonster = Cast<ARoboBossMonster>(InPawn);
+	if (BMonster && BMonster->BTAsset)
 	{
 		UBlackboardComponent* BlackboardComp = Blackboard.Get();
-		if (UseBlackboard(Monster->BTAsset->BlackboardAsset, BlackboardComp))
+		if (UseBlackboard(BMonster->BTAsset->BlackboardAsset, BlackboardComp))
 		{
-			RunBehaviorTree(Monster->BTAsset);
+			RunBehaviorTree(BMonster->BTAsset);
 		}
 
 	}
