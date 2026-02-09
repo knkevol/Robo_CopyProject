@@ -87,7 +87,7 @@ void ARoboBossMonster::ProcessAttackHit_Boss()
 			}
 		}
 	}
-	DrawDebugSphere(GetWorld(), AttackCenter, AttackRadius, 16, bHasHit ? FColor::Green : FColor::Red, false, 1.0f);
+	//DrawDebugSphere(GetWorld(), AttackCenter, AttackRadius, 16, bHasHit ? FColor::Green : FColor::Red, false, 1.0f);
 }
 
 void ARoboBossMonster::OnRep_BMonsterCurrentHP()
