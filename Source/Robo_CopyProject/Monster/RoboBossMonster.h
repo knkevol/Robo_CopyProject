@@ -25,6 +25,9 @@ public:
 	// Sets default values for this character's properties
 	ARoboBossMonster();
 
+	float GetCurrentHP() {return CurrentHP; }
+	float GetMaxHP() {return MaxHP; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -41,9 +44,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat", Replicated)
 	EBMonsterState CurrentState;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnBossChangedHP OnBossHpChanged;
 
 	UFUNCTION()
 	void OnRep_BMonsterCurrentHP();
@@ -65,7 +65,7 @@ public:
 
 	void SetState(EBMonsterState NewState);
 
-	//-------------------Boss Widget-------------------
+	//-------------------Boss Widget(HP/Name)-------------------
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat")
 	FName BossName;
 
@@ -73,6 +73,9 @@ public:
 	TObjectPtr<class UPlayerTopWidget> TopWidget;
 
 	void SetPlayerTopWidget(UPlayerTopWidget* InWidget) { TopWidget = InWidget; }
+
+	UPROPERTY(BlueprintAssignable)
+	FOnBossChangedHP OnBossHpChanged;
 	//-----------------------------------------------
 
 	//--------------------------AI--------------------
