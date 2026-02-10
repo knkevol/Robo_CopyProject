@@ -63,6 +63,17 @@ protected:
 	//------------------Attack---------------
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	//---------------------------------------
+
+	//-------------------Clear------------------
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterUI")
+	TSubclassOf<class UUserWidget> ClearWidgetClass;
+
+	// 积己等 困连阑 包府且 函荐
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterUI")
+	TObjectPtr<class UUserWidget> ClearWidgetObject;
+
+	void ShowClearWidget();
+	//-------------------------------------------
 	
 
 public:	

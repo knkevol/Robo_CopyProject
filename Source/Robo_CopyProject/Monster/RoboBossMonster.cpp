@@ -4,6 +4,8 @@
 #include "RoboBossMonster.h"
 #include "Net/UnrealNetwork.h" //Replicated
 #include "../Player/RoboPlayer.h"
+#include "../Player/RoboPlayerController.h"
+#include "../Player/RoboGameModeBase.h"
 #include "RoboBMonster_AIC.h"
 
 #include "Components/CapsuleComponent.h"
@@ -11,7 +13,9 @@
 #include "Engine/OverlapResult.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "../Widget/PlayerWidget.h"
 #include "../Widget/PlayerTopWidget.h"
+#include "../Widget/ClearWidget.h"
 #include "Components/ProgressBar.h"
 
 
@@ -51,6 +55,16 @@ void ARoboBossMonster::Multi_BossMonsterDie_Implementation()
 		return;
 	}
 
+	ARoboPlayerController* PC = Cast<ARoboPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	if (PC && PC->IsLocalController())
+	{
+		if (PC->PlayerWidgetObject)
+		{
+			PC->PlayerWidgetObject->SetTopWidgetVisibility(false);
+		}
+	}
+
 	SetState(EBMonsterState::Death);
 
 	if (HasAuthority())
@@ -78,6 +92,8 @@ void ARoboBossMonster::Multi_BossMonsterDie_Implementation()
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		GetMesh()->SetSimulatePhysics(false);
 	}
+
+	ShowClearWidget();
 }
 
 void ARoboBossMonster::SetState(EBMonsterState NewState)
@@ -168,6 +184,36 @@ float ARoboBossMonster::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	}
 
 	return DamageAmount;
+}
+
+void ARoboBossMonster::ShowClearWidget()
+{
+	if (ClearWidgetClass)
+	{
+		ARoboPlayerController* PC = Cast<ARoboPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (PC && PC->IsLocalController())
+		{
+			// 위젯 생성
+			ClearWidgetObject = CreateWidget<UUserWidget>(PC, ClearWidgetClass);
+
+			if (ClearWidgetObject)
+			{
+				ClearWidgetObject->SetIsFocusable(true);
+				ClearWidgetObject->AddToViewport();
+
+				if (UClearWidget* ClearWidget = Cast<UClearWidget>(ClearWidgetObject))
+				{
+					ClearWidget->OnContinueClicked.AddDynamic(PC, &ARoboPlayerController::Server_RequestNextStage);
+				}
+
+				// 마우스 커서 활성화 및 입력 모드 변경 (필요 시)
+				FInputModeUIOnly InputMode;
+				InputMode.SetWidgetToFocus(ClearWidgetObject->TakeWidget());
+				PC->SetInputMode(InputMode);
+				PC->bShowMouseCursor = true;
+			}
+		}
+	}
 }
 
 // Called every frame

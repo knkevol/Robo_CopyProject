@@ -2,7 +2,12 @@
 
 
 #include "RoboGameModeBase.h"
+#include "RoboPlayerController.h"
+
 #include "../Widget/StageNameWidget.h"
+#include "../Widget/ClearWidget.h"
+
+#include "Kismet/GameplayStatics.h"
 
 ARoboGameModeBase::ARoboGameModeBase()
 {
@@ -23,4 +28,16 @@ void ARoboGameModeBase::BeginPlay()
 			StageNameWidgetObject->StageNameTyping(LevelName, 0.3f);
 		}
 	}
+}
+
+void ARoboGameModeBase::NextStage()
+{
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		if (ARoboPlayerController* PC = Cast<ARoboPlayerController>(It->Get()))
+		{
+			PC->SetGameInputMode(false);
+		}
+	}
+	GetWorld()->ServerTravel(TEXT("Stage2"));
 }

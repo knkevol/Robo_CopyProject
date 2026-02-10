@@ -17,8 +17,6 @@ void AMainGameModeBase::BeginPlay()
 	Super::BeginPlay();
 
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	UE_LOG(LogTemp, Warning, TEXT("AMainGameModeBase::BeginPlay() PC : %s"), *PC->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("AMainGameModeBase::BeginPlay() MainWidgetClass : %s"), *MainWidgetClass->GetName());
 	if (PC && MainWidgetClass)
 	{
 		MainWidgetObject = CreateWidget<UMainWidget>(PC, MainWidgetClass);

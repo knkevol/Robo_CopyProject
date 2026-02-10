@@ -19,7 +19,7 @@ void UPlayerWidget::NativeConstruct()
 
 	if (ProjectileWidget)
 	{
-		ProjectileWidget->SetVisibility(ESlateVisibility::Collapsed);
+		//ProjectileWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 

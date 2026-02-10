@@ -25,4 +25,8 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget")
 	TObjectPtr<class UStageNameWidget> StageNameWidgetObject;
+
+public:
+	void NextStage();
+
 };
