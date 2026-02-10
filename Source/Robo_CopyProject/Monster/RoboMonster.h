@@ -64,7 +64,7 @@ protected:
 
 
 	//-------------Death---------
-	void AfterDie(AActor* InTargetPlayer);
+	void XPToPlayer(AActor* InTargetPlayer);
 	//------------------------------------
 
 public:	

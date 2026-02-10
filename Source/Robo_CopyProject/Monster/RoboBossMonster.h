@@ -34,6 +34,13 @@ protected:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	//----------RPC-------------
+	UFUNCTION(NetMulticast, Reliable)
+	void Multi_BossMonsterDie();
+	void Multi_BossMonsterDie_Implementation();
+
+	//---------------------------
+
 
 	//-----------------------HP--------------------
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "BMonsterStat", ReplicatedUsing = "OnRep_BMonsterCurrentHP")
@@ -52,6 +59,10 @@ protected:
 	//---------------Perception-----------------------
 	virtual void GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const override;
 	//------------------------------------------------
+
+	//------------------Attack---------------
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	//---------------------------------------
 	
 
 public:	

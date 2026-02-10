@@ -4,10 +4,12 @@
 #include "RoboBossMonster.h"
 #include "Net/UnrealNetwork.h" //Replicated
 #include "../Player/RoboPlayer.h"
+#include "RoboBMonster_AIC.h"
 
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/OverlapResult.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "../Widget/PlayerTopWidget.h"
 #include "Components/ProgressBar.h"
@@ -40,6 +42,42 @@ void ARoboBossMonster::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(ARoboBossMonster, CurrentHP);
 	DOREPLIFETIME(ARoboBossMonster, MaxHP);
 	DOREPLIFETIME(ARoboBossMonster, CurrentState);
+}
+
+void ARoboBossMonster::Multi_BossMonsterDie_Implementation()
+{
+	if (!IsValid(this))
+	{
+		return;
+	}
+
+	SetState(EBMonsterState::Death);
+
+	if (HasAuthority())
+	{
+		if (CurrentHP <= 0)
+		{
+			ARoboBMonster_AIC* AIC = Cast<ARoboBMonster_AIC>(GetController());
+			if (AIC)
+			{
+				AIC->SetState(EBMonsterState::Death);
+			}
+		}
+	}
+
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->StopMovementImmediately();
+		MoveComp->DisableMovement();
+		MoveComp->SetComponentTickEnabled(false); // 더 이상 위치 보정을 하지 않음
+	}
+
+	SetActorEnableCollision(false);
+	if (GetMesh())
+	{
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetMesh()->SetSimulatePhysics(false);
+	}
 }
 
 void ARoboBossMonster::SetState(EBMonsterState NewState)
@@ -109,6 +147,27 @@ void ARoboBossMonster::GetActorEyesViewPoint(FVector& OutLocation, FRotator& Out
 	Super::GetActorEyesViewPoint(OutLocation, OutRotation);
 
 	OutLocation.Z -= 110.f;
+}
+
+float ARoboBossMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (CurrentHP <= 0.0f)
+	{
+		return DamageAmount;
+	}
+
+	CurrentHP -= DamageAmount;
+	OnRep_BMonsterCurrentHP();
+	UE_LOG(LogTemp, Warning, TEXT(" ARoboBossMonster::TakeDamage CurHP : %f"), CurrentHP);
+	//Multi_SpawnHitEffect(GetActorLocation(), GetActorRotation());
+	if (CurrentHP <= 0.0f)
+	{
+		Multi_BossMonsterDie();
+	}
+
+	return DamageAmount;
 }
 
 // Called every frame
