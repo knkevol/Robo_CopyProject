@@ -28,8 +28,9 @@ ARoboBossMonster::ARoboBossMonster()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MonsterCapsule"));
 	GetMesh()->SetCollisionProfileName(TEXT("MonsterMesh"));
 
-
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -104,6 +105,18 @@ void ARoboBossMonster::SetState(EBMonsterState NewState)
 	}
 }
 
+void ARoboBossMonster::OnRep_BossActivated()
+{
+	if (bBossActivated)
+	{
+		ARoboPlayerController* PC = Cast<ARoboPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (PC && PC->IsLocalController() && PC->PlayerWidgetObject)
+		{
+			PC->PlayerWidgetObject->SetTopWidgetVisibility(true, this);
+		}
+	}
+}
+
 void ARoboBossMonster::ProcessAttackHit_Boss()
 {
 	if (!HasAuthority())
@@ -155,7 +168,10 @@ void ARoboBossMonster::ProcessAttackHit_Boss()
 
 void ARoboBossMonster::OnRep_BMonsterCurrentHP()
 {
-	OnBossHpChanged.Broadcast(CurrentHP / MaxHP);
+	if (CachedTopWidget.IsValid())
+	{
+		CachedTopWidget->ProcessBossHPBar(CurrentHP / MaxHP);
+	}
 }
 
 void ARoboBossMonster::GetActorEyesViewPoint(FVector& OutLocation, FRotator& OutRotation) const
@@ -168,6 +184,12 @@ void ARoboBossMonster::GetActorEyesViewPoint(FVector& OutLocation, FRotator& Out
 float ARoboBossMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (!HasAuthority())
+	{
+		return 0.f;
+	}
+	
 
 	if (CurrentHP <= 0.0f)
 	{

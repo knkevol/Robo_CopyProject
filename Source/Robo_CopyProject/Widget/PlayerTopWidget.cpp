@@ -7,6 +7,7 @@
 #include "../Monster/RoboBossMonster.h"
 #include "Kismet/GameplayStatics.h"
 
+
 void UPlayerTopWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -14,6 +15,7 @@ void UPlayerTopWidget::NativeOnInitialized()
 
 void UPlayerTopWidget::ProcessBossHPBar(float InPercent)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ProcessBossHPBar Called"));
 	if (BossHPBar)
 	{
 		BossHPBar->SetPercent(InPercent);
@@ -22,6 +24,9 @@ void UPlayerTopWidget::ProcessBossHPBar(float InPercent)
 
 void UPlayerTopWidget::UpdateBossInfo(ARoboBossMonster* TargetBoss)
 {
+
+	ENetMode NetMode = GetWorld()->GetNetMode();
+	UE_LOG(LogTemp, Warning, TEXT("UpdateBossInfo Called on %s"), NetMode == NM_Client ? TEXT("Client") : TEXT("Server"));
 	if (BossNameText)
 	{
 		BossNameText->SetText(FText::FromString(TargetBoss->BossName.ToString()));
@@ -33,4 +38,7 @@ void UPlayerTopWidget::UpdateBossInfo(ARoboBossMonster* TargetBoss)
 		TargetBoss->OnBossHpChanged.AddDynamic(this, &UPlayerTopWidget::ProcessBossHPBar);
 		ProcessBossHPBar(TargetBoss->GetCurrentHP() / TargetBoss->GetMaxHP());
 	}
+
+	float Ratio = TargetBoss->GetCurrentHP() / TargetBoss->GetMaxHP();
+	ProcessBossHPBar(Ratio);
 }

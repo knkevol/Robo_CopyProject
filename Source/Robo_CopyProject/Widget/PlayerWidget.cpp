@@ -37,17 +37,27 @@ void UPlayerWidget::SetTopWidgetVisibility(bool bIsVisible)
 	{
 		if (bIsVisible)
 		{
-			// 위젯을 켜기 직전에 보스를 다시 찾음
-			AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ARoboBossMonster::StaticClass());
-			ARoboBossMonster* Boss = Cast<ARoboBossMonster>(FoundActor);
+			PlayerTopWidget->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			PlayerTopWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+}
 
-			if (Boss)
+void UPlayerWidget::SetTopWidgetVisibility(bool bIsVisible, ARoboBossMonster* SpawnedBoss)
+{
+	if (PlayerTopWidget)
+	{
+		if (bIsVisible)
+		{
+			if (SpawnedBoss)
 			{
-				// 이름 설정 및 델리게이트 바인딩
-				PlayerTopWidget->UpdateBossInfo(Boss);
+				SpawnedBoss->CachedTopWidget = PlayerTopWidget;
+				PlayerTopWidget->UpdateBossInfo(SpawnedBoss);
 				PlayerTopWidget->SetVisibility(ESlateVisibility::Visible);
 			}
-			UE_LOG(LogTemp, Warning, TEXT("SetTopWidgetVisibility_Boss : %s"), Boss ? *Boss->GetName() : TEXT("None BOss"));
 		}
 		else
 		{

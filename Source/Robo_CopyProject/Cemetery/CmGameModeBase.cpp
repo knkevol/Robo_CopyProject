@@ -21,7 +21,7 @@ void ACmGameModeBase::BeginPlay()
 		{
 			StageNameWidgetObject->AddToViewport();
 
-			FString LevelName = TEXT("Cemetery");
+			FString LevelName = TEXT("[ Cemetery ]");
 			StageNameWidgetObject->StageNameTyping(LevelName, 0.3f);
 		}
 	}

@@ -180,27 +180,16 @@ void ARoboPlayer::AddPlayerXP(float InAmount)
 	if (CurXP >= MaxXP) //LevelUp
 	{
 		CurXP = 0.0f;
-		ARoboPlayerState* PS = GetPlayerState<ARoboPlayerState>();
-		if (PS)
+		if (HasAuthority()) 
 		{
-			PS->LevelUp();
-		}
-
-		if (LevelUpWidgetClass)
-		{
-			LevelUpWidgetObject = CreateWidget<ULevelUpWidget>(GetWorld(), LevelUpWidgetClass);
-			UE_LOG(LogTemp, Warning, TEXT("LevelUpWidgetObject : %s"), LevelUpWidgetObject ? *LevelUpWidgetObject->GetName() : TEXT("None"));	
-		}
-
-		if (LevelUpWidgetObject)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("LevelUpWidgetObject2 : %s"), LevelUpWidgetObject ? *LevelUpWidgetObject->GetName() : TEXT("None"));
-			LevelUpWidgetObject->InitLevelUpScreen(); // 초기 상태 설정
-			if (!LevelUpWidgetObject->IsInViewport())
+			ARoboPlayerState* PS = GetPlayerState<ARoboPlayerState>();
+			if (PS)
 			{
-				LevelUpWidgetObject->AddToViewport();
+				PS->LevelUp();
 			}
 		}
+
+		Client_ShowLevelUpWidget();
 	}
 
 	if (PlayerWidgetObject)
@@ -406,6 +395,23 @@ void ARoboPlayer::Multi_PlayerSpawnHitEffect_Implementation(FVector_NetQuantize 
 			Location,
 			Rotation
 		);
+	}
+}
+
+void ARoboPlayer::Client_ShowLevelUpWidget_Implementation()
+{
+	if (LevelUpWidgetClass)
+	{
+		LevelUpWidgetObject = CreateWidget<ULevelUpWidget>(GetWorld(), LevelUpWidgetClass);
+	}
+
+	if (LevelUpWidgetObject)
+	{
+		LevelUpWidgetObject->InitLevelUpScreen(); // 초기 상태 설정
+		if (!LevelUpWidgetObject->IsInViewport())
+		{
+			LevelUpWidgetObject->AddToViewport();
+		}
 	}
 }
 

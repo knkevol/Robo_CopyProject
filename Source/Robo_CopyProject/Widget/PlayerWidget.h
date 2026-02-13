@@ -36,6 +36,8 @@ public:
 
 	void UpdateBullet(int32 Cur, int32 Max);
 
+
 	void SetTopWidgetVisibility(bool bIsVisible);
+	void SetTopWidgetVisibility(bool bIsVisible, class ARoboBossMonster* SpawnedBoss);
 	
 };

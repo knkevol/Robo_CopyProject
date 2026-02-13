@@ -17,8 +17,7 @@ class ROBO_COPYPROJECT_API UPlayerTopWidget : public UUserWidget
 protected:
 	virtual void NativeOnInitialized() override;
 
-	UFUNCTION()
-	void ProcessBossHPBar(float InPercent);
+	
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget", meta = (WidgetBind))
@@ -28,5 +27,8 @@ public:
 	TObjectPtr<class UProgressBar> BossHPBar;
 
 	void UpdateBossInfo(class ARoboBossMonster* TargetBoss);
+
+	UFUNCTION()
+	void ProcessBossHPBar(float InPercent);
 	
 };

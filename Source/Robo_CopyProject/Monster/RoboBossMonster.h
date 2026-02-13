@@ -98,6 +98,15 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnBossChangedHP OnBossHpChanged;
+
+	UPROPERTY()
+	TWeakObjectPtr<class UPlayerTopWidget> CachedTopWidget;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_BossActivated")
+	bool bBossActivated;
+
+	UFUNCTION()
+	void OnRep_BossActivated();
 	//-----------------------------------------------
 
 	//--------------------------AI--------------------

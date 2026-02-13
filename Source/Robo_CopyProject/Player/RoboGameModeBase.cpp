@@ -24,8 +24,8 @@ void ARoboGameModeBase::BeginPlay()
 		{
 			StageNameWidgetObject->AddToViewport();
 
-			FString LevelName = TEXT("Crypt");
-			StageNameWidgetObject->StageNameTyping(LevelName, 0.3f);
+			FString LevelName = TEXT("[ Crypt ]");
+			StageNameWidgetObject->StageNameTyping(LevelName, 0.2f);
 		}
 	}
 }

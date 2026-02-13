@@ -1,8 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ZoneTrigger.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "../Player/RoboPlayer.h"
 #include "../Player/RoboPlayerController.h"
@@ -23,6 +24,8 @@ AZoneTrigger::AZoneTrigger()
 	SetRootComponent(TriggerBox);
 	TriggerBox->SetBoxExtent(FVector(300.0f, 50.0f, 50.0f));
 	TriggerBox->SetCollisionProfileName(TEXT("SpawnTrigger"));
+
+	bReplicates = true;
 
 }
 
@@ -63,28 +66,35 @@ void AZoneTrigger::OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 				}
 			}
 		}
-		//Boss Spawner∏È TopWidget ∂ÁøÏ±‚
-		if (bIsBossSpawner)
+		//Boss SpawnerÎ©¥ TopWidget ÎùÑÏö∞Í∏∞
+		if (bIsBossSpawner && HasAuthority())
 		{
-			ARoboPlayer* PlayerPawn = Cast<ARoboPlayer>(OtherActor);
-			if (PlayerPawn)
-			{
-				ARoboPlayerController* PC = Cast<ARoboPlayerController>(PlayerPawn->GetController());
-				//TopWidget Visible
-				if (PC && PC->IsLocalController())
-				{
-					PC->PlayerWidgetObject->SetTopWidgetVisibility(true);
-				}
-			}
+			AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ARoboBossMonster::StaticClass());
+			ARoboBossMonster* Boss = Cast<ARoboBossMonster>(FoundActor);
+			Boss->bBossActivated = true;
+			Multicast_ShowTopUI(Boss);
 		}
 		
 		TriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &AZoneTrigger::OnBoxOverlap);
 	}
 
 	bIsTriggered = true;
+}
 
-	//Destroy();
-
+void AZoneTrigger::Multicast_ShowTopUI_Implementation(ARoboBossMonster* InSpawnedBoss)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Boss valid? %s"), InSpawnedBoss ? TEXT("YES") : TEXT("NO"));
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		ARoboPlayerController* PC = Cast<ARoboPlayerController>(*It);
+		if (PC && PC->IsLocalController())
+		{
+			if (PC->PlayerWidgetObject)
+			{
+				PC->PlayerWidgetObject->SetTopWidgetVisibility(true, InSpawnedBoss);
+			}
+		}
+	}
 }
 
 // Called every frame

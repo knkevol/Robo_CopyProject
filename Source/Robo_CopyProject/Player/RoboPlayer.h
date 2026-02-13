@@ -178,6 +178,10 @@ public:
 	void Multi_PlayerSpawnHitEffect(FVector_NetQuantize Location, FRotator Rotation);
 	void Multi_PlayerSpawnHitEffect_Implementation(FVector_NetQuantize Location, FRotator Rotation);
 
+	UFUNCTION(Client, Unreliable)
+	void Client_ShowLevelUpWidget();
+	void Client_ShowLevelUpWidget_Implementation();
+
 
 	//----------------Input Action
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboInput")

@@ -34,6 +34,10 @@ protected:
 	UFUNCTION()
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ShowTopUI(ARoboBossMonster* InSpawnedBoss);
+	void Multicast_ShowTopUI_Implementation(ARoboBossMonster* InSpawnedBoss);
+
 private:
 	uint8 bIsTriggered : 1 = false;
 	uint8 bIsBossSpawner : 1;
