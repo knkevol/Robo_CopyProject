@@ -20,10 +20,10 @@ public:
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void OnUnPossess() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget")
 	TSubclassOf<class UPlayerWidget> PlayerWidgetClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoboWidget")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWidget")
 	TObjectPtr<class UPlayerWidget> PlayerWidgetObject;
 
 	//----------RPC--------------
