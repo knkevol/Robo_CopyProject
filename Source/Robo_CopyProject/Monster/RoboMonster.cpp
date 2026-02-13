@@ -293,7 +293,7 @@ void ARoboMonster::ProcessAttackHit()
 			}
 		}
 	}
-	DrawDebugSphere(GetWorld(), AttackCenter, AttackRadius, 16, bHasHit ? FColor::Green : FColor::Red, false, 1.0f);
+	//DrawDebugSphere(GetWorld(), AttackCenter, AttackRadius, 16, bHasHit ? FColor::Green : FColor::Red, false, 1.0f);
 }
 
 void ARoboMonster::SpawnGlowingOrb()
