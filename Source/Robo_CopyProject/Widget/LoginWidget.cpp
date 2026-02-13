@@ -17,12 +17,18 @@ void ULoginWidget::NativeConstruct()
 	ServerText = Cast<UEditableTextBox>(GetWidgetFromName(TEXT("ServerText")));
 
 	ConnectButton->OnClicked.AddDynamic(this, &ULoginWidget::Connect);
+
+	UGameInstance* GI = UGameplayStatics::GetGameInstance(GetWorld());
+	if (GI)
+	{
+		ULoginGameInstanceSubsystem* Subsystem = GI->GetSubsystem<ULoginGameInstanceSubsystem>();
+		Subsystem->OnLoginResult.AddDynamic(this, &ULoginWidget::LoginResult);
+	}
 }
 
 void ULoginWidget::Connect()
 {
 	SaveData();
-	//UGameplayStatics::OpenLevel(GetWorld(), FName(ServerText->GetText().ToString()), true, TEXT("MainWorld"));
 }
 
 void ULoginWidget::SaveData()
@@ -35,5 +41,18 @@ void ULoginWidget::SaveData()
 		MySubsystem->Password = PasswordText->GetText().ToString();
 
 		MySubsystem->Login();
+	}
+}
+
+void ULoginWidget::LoginResult(bool InResult)
+{
+	if (InResult)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Login Success"));
+		UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainWorld"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Login Failed"));
 	}
 }

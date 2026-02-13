@@ -36,5 +36,8 @@ protected:
 	TObjectPtr<UEditableTextBox> ServerText;
 
 	void SaveData();
+
+	UFUNCTION()
+	void LoginResult(bool InResult);
 	
 };

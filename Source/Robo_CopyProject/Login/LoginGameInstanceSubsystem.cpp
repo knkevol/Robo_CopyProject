@@ -30,6 +30,7 @@ void ULoginGameInstanceSubsystem::OnProcessRequestComplete(FHttpRequestPtr Reque
 	if (!bProcessedSuccessfully || !Response.IsValid())
 	{
 		//호출 실패
+		OnLoginResult.Broadcast(false);
 		UE_LOG(LogTemp, Warning, TEXT("ULoginGameInstanceSubsystem Request Fail!!"));
 		return;
 	}
@@ -42,6 +43,11 @@ void ULoginGameInstanceSubsystem::OnProcessRequestComplete(FHttpRequestPtr Reque
 	if (FJsonObjectConverter::JsonObjectStringToUStruct<FLoginData>(ResponseContent, &LoginData, 0, 0))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("struct name  : %s, result : %d"), *LoginData.name, LoginData.result);
+		OnLoginResult.Broadcast(LoginData.result);
+	}
+	else
+	{
+		OnLoginResult.Broadcast(false);
 	}
 
 	auto JsonReader = TJsonReaderFactory<TCHAR>::Create(ResponseContent);

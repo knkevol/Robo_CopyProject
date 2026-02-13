@@ -11,6 +11,8 @@
 
 #include "LoginGameInstanceSubsystem.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoginResult, bool, bSuccess);
+
 USTRUCT(BlueprintType)
 struct FLoginData
 {
@@ -45,6 +47,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboData")
 	FString Password;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnLoginResult OnLoginResult;
 
 protected:
 	FHttpModule* HTTPModule;
