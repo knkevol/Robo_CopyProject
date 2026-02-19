@@ -43,42 +43,42 @@ void AZoneTrigger::BeginPlay()
 
 void AZoneTrigger::OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!HasAuthority()) 
+	{
+		return;
+	}
 
 	if (bIsTriggered || !OtherActor->IsA(ARoboPlayer::StaticClass()))
 	{
 		return;
 	}
 
-	if (OtherActor && OtherActor != this && OtherActor->IsA(ARoboPlayer::StaticClass()))
+	for (TObjectPtr<AMonsterSpawnerBase> Spawner : TargetSpawners)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AZoneTrigger::OnBoxOverlap_OtherActor"));
-		for (TObjectPtr<AMonsterSpawnerBase> Spawner : TargetSpawners)
+		if (Spawner)
 		{
-			if (Spawner)
-			{
-				Spawner->ExecuteSpawn();
+			Spawner->ExecuteSpawn();
 
-				//Boss Spawn
-				if (ABMonsterSpawner* BSpawner = Cast<ABMonsterSpawner>(Spawner))
-				{
-					bIsBossSpawner = true;
-					
-				}
+			//Boss Spawn
+			if (ABMonsterSpawner* BSpawner = Cast<ABMonsterSpawner>(Spawner))
+			{
+				bIsBossSpawner = true;
+
 			}
 		}
-		//Boss Spawner면 TopWidget 띄우기
-		if (bIsBossSpawner && HasAuthority())
+	}
+	//Boss Spawner면 TopWidget 띄우기
+	if (bIsBossSpawner)
+	{
+		AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ARoboBossMonster::StaticClass());
+		if (ARoboBossMonster* Boss = Cast<ARoboBossMonster>(FoundActor))
 		{
-			AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ARoboBossMonster::StaticClass());
-			ARoboBossMonster* Boss = Cast<ARoboBossMonster>(FoundActor);
 			Boss->bBossActivated = true;
 			Multicast_ShowTopUI(Boss);
 		}
-		
-		TriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &AZoneTrigger::OnBoxOverlap);
 	}
-
 	bIsTriggered = true;
+	TriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &AZoneTrigger::OnBoxOverlap);
 }
 
 void AZoneTrigger::Multicast_ShowTopUI_Implementation(ARoboBossMonster* InSpawnedBoss)

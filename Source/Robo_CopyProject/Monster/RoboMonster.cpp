@@ -37,6 +37,7 @@ ARoboMonster::ARoboMonster()
 	MonsterHPWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
 	MonsterHPWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	MonsterHPWidget->SetIsReplicated(true);
+	bReplicates = true;
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
