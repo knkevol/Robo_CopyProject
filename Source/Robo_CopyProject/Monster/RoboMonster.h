@@ -89,7 +89,7 @@ public:
 	void ChangeSpeed(float NewMaxSpeed);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
-	float XPValue = 100.0f; //temp
+	float XPValue = 50.0f;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MonsterStat")
 	TObjectPtr<class UBehaviorTree> BTAsset;

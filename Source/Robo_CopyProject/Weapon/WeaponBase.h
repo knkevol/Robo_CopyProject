@@ -31,6 +31,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 public:
 	virtual void Tick(float DeltaTime) override;
 	
@@ -47,14 +49,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
 	FName Name;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData", Replicated)
 	int32 MaxBullet = 10;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData", ReplicatedUsing = "OnRep_CurBullet")
 	int32 CurBullet = 10;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboWeaponData")
 	float WeaponDamage = 0.0f;
+
+	UFUNCTION()
+	void OnRep_CurBullet();
 
 	ARoboPlayer* GetOwningPlayer() const;
 

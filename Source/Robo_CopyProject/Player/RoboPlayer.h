@@ -76,8 +76,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UChildActorComponent> Weapon;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", ReplicatedUsing = "OnRep_CurWeapon")
 	TObjectPtr<class AWeaponBase> CurWeapon = nullptr;
+
+	UFUNCTION()
+	void OnRep_CurWeapon();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
 	uint8 bIsPlayerDead : 1 = false;

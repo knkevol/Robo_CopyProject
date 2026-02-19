@@ -168,6 +168,16 @@ void ARoboPlayer::SetPlayerWidget(UPlayerWidget* InWidget)
 	PlayerWidgetObject = InWidget;
 }
 
+void ARoboPlayer::OnRep_CurWeapon()
+{
+	if (CurWeapon)
+	{
+		CurWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
+
+		HandleBulletChanged(CurWeapon->CurBullet, CurWeapon->MaxBullet);
+	}
+}
+
 void ARoboPlayer::OnRep_CurrentHP()
 {
 	OnHpChanged.Broadcast(CurHp / MaxHp);
@@ -293,6 +303,7 @@ void ARoboPlayer::Server_EquipWeapon_Implementation(TSubclassOf<AWeaponBase> Wea
 	if (NewWeapon)
 	{
 		NewWeapon->InitializeWeaponData(ItemRowName);
+		HandleBulletChanged(NewWeapon->CurBullet, NewWeapon->MaxBullet);
 	}
 }
 
@@ -528,14 +539,16 @@ void ARoboPlayer::SetWeaponChildActor(TSubclassOf<AWeaponBase> InWeaponClass)
 			ChildWeapon->OnBulletChanged.AddUObject(this, &ARoboPlayer::HandleBulletChanged);
 		}
 
-		HandleBulletChanged(ChildWeapon->CurBullet, ChildWeapon->MaxBullet);
+		//HandleBulletChanged(ChildWeapon->CurBullet, ChildWeapon->MaxBullet);
 	}
 }
 
 void ARoboPlayer::HandleBulletChanged(int32 InCurBullet, int32 InMaxBullet)
 {
 	if (!IsLocallyControlled())
+	{
 		return;
+	}
 
 	ARoboPlayerController* PC = Cast<ARoboPlayerController>(GetController());
 

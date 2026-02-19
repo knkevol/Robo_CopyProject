@@ -13,6 +13,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+#include "Net/UnrealNetwork.h"
+
 AWeaponBase::AWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -20,7 +22,8 @@ AWeaponBase::AWeaponBase()
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 
-	SetReplicates(true);
+	bReplicates = true;
+	AActor::SetReplicatingMovement(true);
 }
 
 void AWeaponBase::BeginPlay()
@@ -37,9 +40,23 @@ void AWeaponBase::BeginPlay()
 	}
 }
 
+void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AWeaponBase, CurBullet);
+	DOREPLIFETIME(AWeaponBase, MaxBullet);
+}
+
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AWeaponBase::OnRep_CurBullet()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Client OnRep: %d / %d"), CurBullet, MaxBullet);
+	OnBulletChanged.Broadcast(CurBullet, MaxBullet);
 }
 
 ARoboPlayer* AWeaponBase::GetOwningPlayer() const
