@@ -161,6 +161,8 @@ void ARoboPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 	DOREPLIFETIME(ARoboPlayer, CurHp);
 	DOREPLIFETIME(ARoboPlayer, MaxHp);
+	DOREPLIFETIME(ARoboPlayer, CurXP);
+	DOREPLIFETIME(ARoboPlayer, MaxXP);
 }
 
 void ARoboPlayer::SetPlayerWidget(UPlayerWidget* InWidget)
@@ -183,32 +185,40 @@ void ARoboPlayer::OnRep_CurrentHP()
 	OnHpChanged.Broadcast(CurHp / MaxHp);
 }
 
+void ARoboPlayer::OnRep_CurXP()
+{
+	UpdateXPWidget();
+}
+
+void ARoboPlayer::UpdateXPWidget()
+{
+	if (IsLocallyControlled() && PlayerWidgetObject && PlayerWidgetObject->PlayerStatWidget)
+	{
+		PlayerWidgetObject->PlayerStatWidget->ProcessXPBar(CurXP / MaxXP);
+	}
+}
+
 void ARoboPlayer::AddPlayerXP(float InAmount)
 {
+	if (!HasAuthority())
+	{
+		return;
+	}
+
 	CurXP += InAmount;
 
 	if (CurXP >= MaxXP) //LevelUp
 	{
-		CurXP = 0.0f;
-		if (HasAuthority()) 
+		CurXP -= MaxXP; // 0으로 초기화보다 남은 경험치를 넘겨주는 게 좋습니다.
+		ARoboPlayerState* PS = GetPlayerState<ARoboPlayerState>();
+		if (PS)
 		{
-			ARoboPlayerState* PS = GetPlayerState<ARoboPlayerState>();
-			if (PS)
-			{
-				PS->LevelUp();
-			}
+			PS->LevelUp();
 		}
-
 		Client_ShowLevelUpWidget();
 	}
 
-	if (PlayerWidgetObject)
-	{
-		if (PlayerWidgetObject->PlayerStatWidget)
-		{
-			PlayerWidgetObject->PlayerStatWidget->ProcessXPBar(CurXP / MaxXP);
-		}
-	}
+	UpdateXPWidget(); //Server
 }
 
 void ARoboPlayer::ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)

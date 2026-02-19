@@ -97,10 +97,15 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnChangedHP OnHpChanged;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", ReplicatedUsing = "OnRep_CurXP")
 	float CurXP = 0.0f;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RoboCharacter", Replicated)
 	float MaxXP = 100.0f;
+
+	UFUNCTION()
+	void OnRep_CurXP();
+
+	void UpdateXPWidget();
 
 	void AddPlayerXP(float InAmount);
 
